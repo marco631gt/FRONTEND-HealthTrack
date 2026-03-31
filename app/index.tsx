@@ -1,10 +1,13 @@
-import React from "react";
-import pantallaForm from "./components/pantallaForm";
-import LoginScreen from "./components/LoginScreen";
+import React, { useState } from "react";
+import SplashScreen from '../app/views/SplashScreen';
+import LoginScreen from "./views/LoginScreen";
 
 export default function Index() {
-  return (
-    LoginScreen()
-  );
-}
+  const [isLoading, setIsLoading] = useState(true);
+  if (isLoading) {
+    // Si está cargando, mostramos la Splash
+    return <SplashScreen onFinish={() => setIsLoading(false)} />;
+  }
 
+  return <LoginScreen />;
+}
