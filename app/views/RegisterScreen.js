@@ -6,16 +6,18 @@ import { useRegister } from '../hooks/useRegister';
 import { useRouter } from 'expo-router';
 
 const RegisterScreen = () => {
-    const router = useRouter(); // Inicialización del router
+    const router = useRouter();
     const {
-        name,
-        setName,
-        email,
-        setEmail,
-        password,
-        setPassword,
-        role,
-        setRole,
+        name, setName,
+        email, setEmail,
+        password, setPassword,
+        role, setRole,
+        phoneNumber,setPhoneNumber,
+        age, setAge,
+        sex, setSex,
+        bloodType, setBloodType,
+        allergies, setAllergies,
+        chronicConditions, setChronicConditions,
         handleRegister
     } = useRegister();
 
@@ -23,11 +25,7 @@ const RegisterScreen = () => {
         <SafeAreaView style={styles.container}>
             <ScrollView contentContainerStyle={styles.scroll}>
 
-                {/* Botón de volver corregido */}
-                <TouchableOpacity
-                    style={styles.backButton}
-                    onPress={() => router.back()}
-                >
+                <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
                     <Ionicons name="arrow-back-circle" size={45} color="#fff" />
                 </TouchableOpacity>
 
@@ -36,6 +34,7 @@ const RegisterScreen = () => {
                 </View>
 
                 <View style={styles.card}>
+                    {/* --- CAMPOS COMUNES --- */}
                     <Text style={styles.label}>Name</Text>
                     <TextInput
                         style={styles.input}
@@ -66,7 +65,6 @@ const RegisterScreen = () => {
                     <Text style={styles.label}>Role</Text>
                     <View style={styles.roleContainer}>
                         <Text style={styles.rolePlaceholder}>Choose your role</Text>
-
                         <TouchableOpacity style={styles.checkboxRow} onPress={() => setRole('Doctor')}>
                             <Ionicons name={role === 'Doctor' ? "checkbox" : "square-outline"} size={24} color="#007bff" />
                             <Text style={styles.checkboxLabel}>Doctor</Text>
@@ -77,6 +75,73 @@ const RegisterScreen = () => {
                             <Text style={styles.checkboxLabel}>Patient</Text>
                         </TouchableOpacity>
                     </View>
+
+                    <Text style={styles.label}>Phone Number</Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Enter your phone number"
+                                value={phoneNumber}
+                                onChangeText={setPhoneNumber}
+                                keyboardType="numeric"
+                            />
+
+                    {/* --- CAMPOS CONDICIONALES PARA PACIENTE --- */}
+                    {role === 'Patient' && (
+                        <View>
+                            <Text style={styles.label}>Age</Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="e.g. 25"
+                                value={age}
+                                onChangeText={setAge}
+                                keyboardType="numeric"
+                            />
+
+                            <Text style={styles.label}>Sex</Text>
+                            <View style={styles.roleContainer}>
+                                <Text style={styles.rolePlaceholder}>Select your sex</Text>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                    <TouchableOpacity style={styles.checkboxRow} onPress={() => setSex('Male')}>
+                                        <Ionicons name={sex === 'Male' ? "radio-button-on" : "radio-button-off"} size={22} color="#007bff" />
+                                        <Text style={styles.checkboxLabel}>Male</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.checkboxRow} onPress={() => setSex('Female')}>
+                                        <Ionicons name={sex === 'Female' ? "radio-button-on" : "radio-button-off"} size={22} color="#007bff" />
+                                        <Text style={styles.checkboxLabel}>Female</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.checkboxRow} onPress={() => setSex('Other')}>
+                                        <Ionicons name={sex === 'Other' ? "radio-button-on" : "radio-button-off"} size={22} color="#007bff" />
+                                        <Text style={styles.checkboxLabel}>Other</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+
+                            <Text style={styles.label}>Blood Type</Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="e.g. O+"
+                                value={bloodType}
+                                onChangeText={setBloodType}
+                                autoCapitalize="characters"
+                            />
+
+                            <Text style={styles.label}>Allergies</Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="List allergies or 'None'"
+                                value={allergies}
+                                onChangeText={setAllergies}
+                            />
+
+                            <Text style={styles.label}>Chronic Conditions</Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="e.g. Diabetes, Asthma, None"
+                                value={chronicConditions}
+                                onChangeText={setChronicConditions}
+                            />
+                        </View>
+                    )}
 
                     <TouchableOpacity style={styles.btnSignUp} onPress={handleRegister}>
                         <Text style={styles.btnText}>Sign Up</Text>
