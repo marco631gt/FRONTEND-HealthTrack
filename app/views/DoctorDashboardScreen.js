@@ -50,7 +50,7 @@ const DoctorDashboardScreen = () => {
                             <Text style={styles.notificationText}>Notifications</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.profileCircleWrapper}>
+                        <TouchableOpacity style={styles.profileCircleWrapper} onPress={() => router.push('/views/ProfileScreen')}>
                             <RNImage
                                 source={require('../assets/images/doctor-profile.png')}
                                 style={styles.profileAvatar}

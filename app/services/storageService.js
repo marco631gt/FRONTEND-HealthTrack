@@ -24,13 +24,18 @@ export const deleteToken = async () => {
   await SecureStore.deleteItemAsync("token");
 };
 
+export const removeItem = async (key) => {
+  await AsyncStorage.removeItem(key);
+};
+
 
 const storageService = {
   setItem,
   getItem,
   saveToken,
   getToken,
-  deleteToken
+  deleteToken,
+  removeItem
 };
 
 export default storageService; 

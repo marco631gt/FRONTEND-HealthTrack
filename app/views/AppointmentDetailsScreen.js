@@ -1,29 +1,36 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Image as RNImage } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
+// IMPORTANTE: Asegúrate de tener estas dos importaciones
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons"; 
 import { useAppointmentDetails } from "../hooks/useAppointmentDetails";
 import { useRouter } from "expo-router";
 
 const AppointmentDetailsScreen = ({ appointmentId }) => {
     const router = useRouter();
-    const { patientData, notes, setNotes, isLoading, handleFinish } = useAppointmentDetails(appointmentId);
+    const { patientData, notes, setNotes, status, setStatus, isLoading, handleFinish } = useAppointmentDetails(appointmentId);
 
     if (isLoading) return <View style={styles.center}><Text>Loading...</Text></View>;
 
+    const statusOptions = [
+        { label: 'In Progress', value: 'In Progress', icon: 'clock-outline', color: '#f39c12' },
+        { label: 'Canceled', value: 'Canceled', icon: 'close-circle-outline', color: '#e74c3c' },
+        { label: 'Completed', value: 'Completed', icon: 'check-all', color: '#27ae60' },
+    ];
+
     return (
         <SafeAreaView style={styles.container}>
-            {/* Header Azul */}
+            {/* Header */}
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-                    <Ionicons name="arrow-back-circle" size={45} color="#007bff" />
+                <TouchableOpacity onPress={() => router.back()}>
+                    <Ionicons name="arrow-back-circle" size={45} color="#fff" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Appointment Details</Text>
             </View>
 
-            {/* Tarjeta de Identificación */}
             <View style={styles.contentCard}>
                 <ScrollView showsVerticalScrollIndicator={false}>
+                    {/* Tarjeta de Identificación */}
                     <View style={styles.idCard}>
                         <RNImage 
                             source={require('../assets/images/doctor-profile.png')} 
@@ -40,6 +47,34 @@ const AppointmentDetailsScreen = ({ appointmentId }) => {
                         </View>
                     </View>
 
+                    {/* --- BARRA DE ESTATUS --- */}
+                    <Text style={styles.sectionTitle}>APPOINTMENT STATUS</Text>
+                    <View style={styles.statusContainer}>
+                        {statusOptions.map((option) => (
+                            <TouchableOpacity
+                                key={option.value}
+                                style={[
+                                    styles.statusButton,
+                                    status === option.value && { backgroundColor: option.color, borderColor: option.color }
+                                ]}
+                                onPress={() => setStatus(option.value)}
+                            >
+                                <MaterialCommunityIcons 
+                                    name={option.icon} 
+                                    size={20} 
+                                    color={status === option.value ? "#fff" : "#666"} 
+                                />
+                                <Text style={[
+                                    styles.statusText,
+                                    status === option.value && { color: "#fff", fontWeight: 'bold' }
+                                ]}>
+                                    {option.label}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+
+                    {/* Notas de Consulta */}
                     <Text style={styles.sectionTitle}>CONSULTATION NOTES</Text>
                     <View style={styles.notesBox}>
                         <Text style={styles.notesLabel}>Reason:</Text>
@@ -72,10 +107,35 @@ const styles = StyleSheet.create({
     idLabel: { color: 'rgba(255,255,255,0.7)', fontSize: 12, fontWeight: 'bold', marginBottom: 2 },
     idValue: { color: '#fff', fontSize: 15 },
     sectionTitle: { fontSize: 18, fontWeight: 'bold', color: '#1a4f8d', marginTop: 25, marginBottom: 15 },
+    
+    // ESTILOS NUEVOS PARA LA BARRA DE ESTATUS
+    statusContainer: { 
+        flexDirection: 'row', 
+        justifyContent: 'space-between', 
+        backgroundColor: '#fff', 
+        borderRadius: 15, 
+        padding: 5,
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4
+    },
+    statusButton: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 12,
+        marginHorizontal: 2,
+        borderRadius: 10,
+    },
+    statusText: { fontSize: 11, marginLeft: 5, color: '#666' },
+
     notesBox: { backgroundColor: '#fff', borderRadius: 20, padding: 15, elevation: 3 },
     notesLabel: { fontWeight: 'bold', color: '#666', marginBottom: 5 },
     input: { height: 150, textAlignVertical: 'top', fontSize: 16 },
-    finishBtn: { backgroundColor: '#1a73e8', padding: 18, borderRadius: 15, alignItems: 'center', marginTop: 25 },
+    finishBtn: { backgroundColor: '#1a73e8', padding: 18, borderRadius: 15, alignItems: 'center', marginTop: 25, marginBottom: 30 },
     finishBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
     center: { flex: 1, justifyContent: 'center', alignItems: 'center' }
 });

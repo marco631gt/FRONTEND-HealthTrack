@@ -4,6 +4,7 @@ export const useAppointmentDetails = (appointmentId) => {
     const [patientData, setPatientData] = useState(null);
     const [notes, setNotes] = useState("");
     const [isLoading, setIsLoading] = useState(true);
+    const [status, setStatus] = useState("In Progress");
 
     useEffect(() => {
         const loadData = async () => {
@@ -25,9 +26,14 @@ export const useAppointmentDetails = (appointmentId) => {
     }, [appointmentId]);
 
     const handleFinish = () => {
-        console.log("Consulta finalizada con notas:", notes);
-        // Aquí iría la lógica para guardar en base de datos
+        console.log("Consulta finalizada:", {
+            appointmentId,
+            status,
+            notes
+        });
+        // Aquí enviarías status y notes a tu backend
     };
 
-    return { patientData, notes, setNotes, isLoading, handleFinish };
+    // Retornamos status y setStatus
+    return { patientData, notes, setNotes, status, setStatus, isLoading, handleFinish };
 };
