@@ -23,3 +23,14 @@ export const getToken = async () => {
 export const deleteToken = async () => {
   await SecureStore.deleteItemAsync("token");
 };
+
+
+const storageService = {
+  setItem,
+  getItem,
+  saveToken,
+  getToken,
+  deleteToken
+};
+
+export default storageService; 

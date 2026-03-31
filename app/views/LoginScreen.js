@@ -16,9 +16,11 @@ import { AntDesign, FontAwesome, Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLogin } from "../hooks/useLogin";
+import { useRouter } from 'expo-router';
 
 const LoginScreen = () => {
     // Integramos tu hook ViewModel
+    const router = useRouter(); // Inicialización del router
     const {
         email,
         setEmail,
@@ -38,27 +40,22 @@ const LoginScreen = () => {
             >
                 <ScrollView
                     contentContainerStyle={styles.scrollContent}
-                    keyboardShouldPersistTaps="handled" // Cierra teclado al tocar fuera
+                    keyboardShouldPersistTaps="handled"
                 >
-                    {/* Cierra el teclado si tocas en cualquier parte de la pantalla */}
                     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                         <View style={styles.mainContainer}>
 
-                            {/* 1. Imagen de Cabecera (Doctora) */}
                             <Image
                                 source={require('../assets/images/doctor-icon.png')}
                                 style={styles.headerImage}
-                                contentFit="contain" // Ajusta la imagen dentro del contenedor
+                                contentFit="contain"
                             />
 
-                            {/* 2. Título principal "Login In" (con efecto 3D) */}
                             <View style={styles.titleContainer}>
                                 <Text style={styles.title}>Login In</Text>
                             </View>
 
-                            {/* 3. Inputs */}
                             <View style={styles.formContainer}>
-                                {/* Email */}
                                 <Text style={styles.inputLabel}>Email Address</Text>
                                 <View style={styles.inputWrapper}>
                                     <TextInput
@@ -72,7 +69,6 @@ const LoginScreen = () => {
                                     />
                                 </View>
 
-                                {/* Password */}
                                 <Text style={styles.inputLabel}>Password</Text>
                                 <View style={styles.inputWrapper}>
                                     <TextInput
@@ -86,17 +82,11 @@ const LoginScreen = () => {
                                 </View>
                             </View>
 
-                            {/* 4. Botón de Login */}
-                            <TouchableOpacity style={styles.loginButton}
-                                onPress={handleLogin}>
-                                <Text
-                                    style={styles.loginButtonText}>Login In
-                                </Text>
+                            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+                                <Text style={styles.loginButtonText}>Login In</Text>
                             </TouchableOpacity>
 
-                            {/* 5. Remember Me / Forgot Password? */}
                             <View style={styles.optionsContainer}>
-                                {/* Checkbox (Remember me) */}
                                 <TouchableOpacity
                                     style={styles.checkboxContainer}
                                     onPress={() => setRememberMe(!rememberMe)}
@@ -104,41 +94,34 @@ const LoginScreen = () => {
                                     <Ionicons
                                         name={rememberMe ? "checkbox" : "square-outline"}
                                         size={22}
-                                        color={rememberMe ? "#007bff" : "#007bff"} // Color azul del checkbox
+                                        color="#007bff"
                                     />
                                     <Text style={styles.checkboxLabel}>Remember me</Text>
                                 </TouchableOpacity>
 
-                                {/* Separador vertical */}
                                 <View style={styles.verticalSeparator} />
 
-                                {/* Forgot Password */}
                                 <TouchableOpacity>
                                     <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
                                 </TouchableOpacity>
                             </View>
 
-                            {/* 6. Social Sign In */}
-                            <Text style={styles.socialTitle}>Our Sing in with</Text>
+                            <Text style={styles.socialTitle}>Our Sign in with</Text>
                             <View style={styles.socialButtonsContainer}>
-                                {/* Facebook */}
                                 <TouchableOpacity style={styles.socialButton}>
                                     <Image source={require('../assets/images/facebook.jpg')} style={{ width: 35, height: 35 }} />
                                 </TouchableOpacity>
-                                {/* Google */}
                                 <TouchableOpacity style={styles.socialButton}>
                                     <Image source={require('../assets/images/google.png')} style={{ width: 35, height: 35 }} />
                                 </TouchableOpacity>
-                                {/* Apple */}
                                 <TouchableOpacity style={styles.socialButton}>
                                     <FontAwesome name="apple" size={40} color="#1c1c1e" />
                                 </TouchableOpacity>
                             </View>
 
-                            {/* 7. Sign Up Link */}
                             <View style={styles.signUpContainer}>
-                                <Text style={styles.signUpText}>Don’t have an account?</Text>
-                                <TouchableOpacity>
+                                <Text style={styles.signUpText}>Don't have an account?</Text>
+                                <TouchableOpacity onPress={() => router.push('/views/RegisterScreen')}>
                                     <Text style={styles.signUpLink}> Sign Up</Text>
                                 </TouchableOpacity>
                             </View>

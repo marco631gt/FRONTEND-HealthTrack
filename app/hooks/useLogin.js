@@ -58,3 +58,5 @@ export const useLogin = () => {
         handleLogin,
     };
 };
+
+export default useLogin;
