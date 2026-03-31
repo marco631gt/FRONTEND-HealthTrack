@@ -1,15 +1,22 @@
-import React, { useState } from "react";
-import SplashScreen from './views/SplashScreen';
+import React, { useState, useEffect } from "react";
 import LoginScreen from './views/LoginScreen';
+import DoctorDashboardScreen from './views/DoctorDashboardScreen';
+import { getItem } from "./services/storageService";
 
 export default function Index() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
-  if (isLoading) {
-    return <SplashScreen onFinish={() => setIsLoading(false)} />;
+  useEffect(() => {
+    const checkSession = async () => {
+      const profile = await getItem('user_profile');
+      if (profile?.role) setUserRole(profile.role);
+    };
+    checkSession();
+  }, []);
+
+  if (userRole === 'Doctor') {
+    return <DoctorDashboardScreen />;
   }
 
-  // Simplemente retornamos el Login. 
-  // La navegación se gestiona por carpetas automáticamente.
   return <LoginScreen />;
 }
