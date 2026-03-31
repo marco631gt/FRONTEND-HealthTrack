@@ -8,16 +8,9 @@ export const useLogin = () => {
     const [password, setPassword] = useState("");
 
     const handleLogin = async () => {
-
-        // Validaciones
-        // Espacio vacio validation ya lo teniamos con Vidal esa 
+        // 1. Validaciones
         if (email.trim() === '' || password.trim() === '') {
             Alert.alert('Error', 'All the fields required');
-            return;
-        }
-
-        if (!email.includes('@')) {
-            Alert.alert('Error', 'Email not valid');
             return;
         }
 
@@ -26,10 +19,13 @@ export const useLogin = () => {
             return;
         }
 
-        // MOCK LOGIN
+        // 2. MOCK LOGIN (Datos de prueba)
+        // Agregamos el rol al mockUser para que el sistema sepa a dónde ir
         const mockUser = {
             email: "test@test.com",
-            password: "123456"
+            password: "123456",
+            name: "Usuario de Prueba",
+            role: "Patient" // <--- CAMBIA ESTO A "Doctor" para probar la otra pantalla
         };
 
         if (email !== mockUser.email || password !== mockUser.password) {
@@ -37,17 +33,32 @@ export const useLogin = () => {
             return;
         }
 
-        // Guardar sesión
-        const fakeToken = "TOKEN-FAKE-123";
+        try {
+            // 3. Guardar sesión y PERFIL
+            const fakeToken = "TOKEN-FAKE-123";
+            await saveToken(fakeToken);
+            
+            // IMPORTANTE: Guardamos el perfil con el ROL para el index.tsx
+            await setItem('user_profile', { 
+                role: mockUser.role, 
+                name: mockUser.name,
+                email: mockUser.email 
+            });
+            
+            await setItem("last_login", new Date().toISOString());
 
-        await saveToken(fakeToken);
-        await setItem("last_login", new Date().toISOString());
+            Alert.alert("Success", `Welcome ${mockUser.name}`, [
+                { text: "OK" }
+            ]);
 
-        Alert.alert("Éxito", "Login correcto");
+            // Limpiar
+            setEmail("");
+            setPassword("");
 
-        // limpiar
-        setEmail("");
-        setPassword("");
+        } catch (error) {
+            console.error("Error saving session:", error);
+            Alert.alert("Error", "Could not save session data");
+        }
     };
 
     return {
