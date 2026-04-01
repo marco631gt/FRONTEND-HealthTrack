@@ -2,10 +2,10 @@ import { useState } from "react";
 import { Alert } from "react-native";
 import { validate } from "../helpers/validators";
 import { saveToken, setItem } from "../services/storageService";
-import { useRouter } from 'expo-router'; // 1. Importamos el router
+import { useRouter } from 'expo-router';
 
 export const useRegister = () => {
-    const router = useRouter(); // 2. Inicializamos el router
+    const router = useRouter(); 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -20,7 +20,7 @@ export const useRegister = () => {
 
     const handleRegister = async () => {
 
-        // 1. Validaciones base (Para todos)
+        
         if (email.trim() === '' || password.trim() === '' || name.trim() === '') {
             Alert.alert('Error', 'All the fields required');
             return;
@@ -31,13 +31,11 @@ export const useRegister = () => {
             return;
         }
 
-        // Validación de 10 números exactamente
         if (!phoneNumber.trim() || isNaN(phoneNumber) || phoneNumber.length !== 10) {
             Alert.alert("Error", "Please enter a valid 10-digit phone number");
             return;
         }
 
-        // 2. Validaciones exclusivas para PACIENTES
         if (role === 'Patient') {
             if (!age.trim() || isNaN(age) || parseInt(age) <= 0) {
                 Alert.alert("Error", "Please enter a valid age");
@@ -57,7 +55,7 @@ export const useRegister = () => {
             }
         }
 
-        // 3. Creación del objeto de usuario
+        // Creación del objeto de usuario
         const newUser = {
             name,
             email,
@@ -79,9 +77,7 @@ export const useRegister = () => {
             await saveToken(fakeToken);
             await setItem('user_profile', newUser);
 
-            // Función para limpiar y navegar
             const onConfirmSuccess = () => {
-                // Limpiar formulario
                 setName('');
                 setEmail('');
                 setPassword('');
@@ -93,11 +89,9 @@ export const useRegister = () => {
                 setAllergies('');
                 setChronicConditions('');
 
-                // Navegar al login
                 router.replace('./LoginScreen'); 
             };
 
-            // --- LÓGICA DE ALERTA DIFERENCIADA CON REDIRECCIÓN ---
             if (role === 'Patient') {
                 Alert.alert(
                     '¡Éxito!',
@@ -109,13 +103,13 @@ export const useRegister = () => {
                     `• Alergias: ${allergies}\n` +
                     `• Condiciones: ${chronicConditions}\n` +
                     `• Phone Number: ${phoneNumber}`,
-                    [{ text: 'OK', onPress: onConfirmSuccess }] // Botón para redirigir
+                    [{ text: 'OK', onPress: onConfirmSuccess }]
                 );
             } else {
                 Alert.alert(
                     '¡Éxito!', 
                     `Usuario ${name} registrado como ${role} and your phone number is: ${phoneNumber}`,
-                    [{ text: 'OK', onPress: onConfirmSuccess }] // Botón para redirigir
+                    [{ text: 'OK', onPress: onConfirmSuccess }]
                 );
             }
 

@@ -19,7 +19,7 @@ const AppointmentDetailScreen = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* Header con botón de volver */}
+            {/* botón de volver */}
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()}>
                     <Ionicons name="arrow-back" size={28} color="#fff" />
@@ -31,7 +31,6 @@ const AppointmentDetailScreen = () => {
             <View style={styles.contentCard}>
                 <ScrollView showsVerticalScrollIndicator={false}>
                     
-                    {/* INFO DEL DOCTOR */}
                     <View style={styles.infoSection}>
                         <View style={styles.iconCircle}>
                             <MaterialCommunityIcons name="doctor" size={35} color="#1a73e8" />
@@ -42,7 +41,6 @@ const AppointmentDetailScreen = () => {
 
                     <View style={styles.divider} />
 
-                    {/* FECHA Y HORA */}
                     <View style={styles.rowInfo}>
                         <View style={styles.detailItem}>
                             <Ionicons name="calendar-outline" size={20} color="#1a73e8" />
@@ -56,13 +54,11 @@ const AppointmentDetailScreen = () => {
                         </View>
                     </View>
 
-                    {/* MOTIVO DEL PACIENTE */}
                     <Text style={styles.sectionTitle}>Your Reason for Visit</Text>
                     <View style={styles.reasonBox}>
                         <Text style={styles.reasonText}>{appointment.reason}</Text>
                     </View>
 
-                    {/* DETAILS (LO QUE PUSO EL DOCTOR) */}
                     <Text style={[styles.sectionTitle, { color: '#2e7d32' }]}>Doctor's Clinical Notes</Text>
                     <View style={[styles.reasonBox, styles.doctorNoteBox]}>
                         <Text style={styles.doctorNoteText}>
@@ -70,7 +66,6 @@ const AppointmentDetailScreen = () => {
                         </Text>
                     </View>
 
-                    {/* ACCIONES */}
                     <View style={styles.actionContainer}>
                         <TouchableOpacity 
                             style={styles.btnReschedule} 

@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Platform, Image as RNImage } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
-import { Stack } from 'expo-router'; // Importamos Stack para configurar el header
+import { Stack } from 'expo-router';
 import { useDoctorDashboard } from '../hooks/useDoctorDashboard';
 import { useRouter } from 'expo-router';
 
@@ -25,7 +25,7 @@ const DoctorDashboardScreen = () => {
             </View>
             <TouchableOpacity
                 style={styles.detailsButton}
-                onPress={() => router.push(`/doctor/appointment/${item.id}`)} // <- ESTO ES LO NUEVO
+                onPress={() => router.push(`/doctor/appointment/${item.id}`)}
             >
                 <Ionicons name="chevron-down-circle" size={28} color="#007bff" />
             </TouchableOpacity>
@@ -35,11 +35,9 @@ const DoctorDashboardScreen = () => {
     const router = useRouter();
     return (
         <View style={{ flex: 1, backgroundColor: '#1a73e8' }}>
-            {/* 1. Ocultar el título de la ruta "index" */}
             <Stack.Screen options={{ headerShown: false }} />
 
             <SafeAreaView style={styles.container}>
-                {/* Header Azul Superior */}
                 <View style={styles.header}>
                     <View style={styles.topBar}>
                         <TouchableOpacity style={styles.notificationGroup}>
@@ -69,9 +67,7 @@ const DoctorDashboardScreen = () => {
                     </View>
                 </View>
 
-                {/* Contenido Principal */}
                 <View style={styles.contentCard}>
-                    {/* Tabs / Pestañas con Z-Index para quedar arriba */}
                     <View style={styles.tabContainer}>
                         <TouchableOpacity style={[styles.tab, styles.activeTab]}>
                             <Ionicons name="home" size={24} color="#fff" />

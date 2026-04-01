@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Image as RNImage } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-// IMPORTANTE: Asegúrate de tener estas dos importaciones
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons"; 
 import { useAppointmentDetails } from "../hooks/useAppointmentDetails";
 import { useRouter } from "expo-router";
@@ -20,7 +19,6 @@ const AppointmentDetailsScreen = ({ appointmentId }) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* Header */}
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()}>
                     <Ionicons name="arrow-back-circle" size={45} color="#fff" />
@@ -30,7 +28,7 @@ const AppointmentDetailsScreen = ({ appointmentId }) => {
 
             <View style={styles.contentCard}>
                 <ScrollView showsVerticalScrollIndicator={false}>
-                    {/* Tarjeta de Identificación */}
+
                     <View style={styles.idCard}>
                         <RNImage 
                             source={require('../assets/images/doctor-profile.png')} 
@@ -47,7 +45,6 @@ const AppointmentDetailsScreen = ({ appointmentId }) => {
                         </View>
                     </View>
 
-                    {/* --- BARRA DE ESTATUS --- */}
                     <Text style={styles.sectionTitle}>APPOINTMENT STATUS</Text>
                     <View style={styles.statusContainer}>
                         {statusOptions.map((option) => (
@@ -74,7 +71,6 @@ const AppointmentDetailsScreen = ({ appointmentId }) => {
                         ))}
                     </View>
 
-                    {/* Notas de Consulta */}
                     <Text style={styles.sectionTitle}>CONSULTATION NOTES</Text>
                     <View style={styles.notesBox}>
                         <Text style={styles.notesLabel}>Reason:</Text>
@@ -108,7 +104,6 @@ const styles = StyleSheet.create({
     idValue: { color: '#fff', fontSize: 15 },
     sectionTitle: { fontSize: 18, fontWeight: 'bold', color: '#1a4f8d', marginTop: 25, marginBottom: 15 },
     
-    // ESTILOS NUEVOS PARA LA BARRA DE ESTATUS
     statusContainer: { 
         flexDirection: 'row', 
         justifyContent: 'space-between', 

@@ -3,12 +3,11 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Platfo
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { usePatientDashboard } from "../hooks/usePatientDashboard"; // <-- Importamos tu hook
+import { usePatientDashboard } from "../hooks/usePatientDashboard";
 
 const PatientDashboardScreen = () => {
     const router = useRouter();
     
-    // Extraemos todo del hook
     const {
         doctors,
         appointments,
@@ -45,8 +44,6 @@ const PatientDashboardScreen = () => {
                     <View style={styles.formCard}>
                         <Text style={styles.label}>Select your Doctor</Text>
                         <View style={styles.inputWrapper}>
-                            {/* Aquí puedes usar un Picker de 'react-native-picker' 
-                                o un TextInput que abra un Modal de selección */}
                             <TextInput 
                                 style={styles.inputInternal}
                                 placeholder="Tap to select doctor..."
@@ -89,7 +86,6 @@ const PatientDashboardScreen = () => {
                         <Text style={styles.sectionTitle}>My Appointments</Text>
                     </View>
 
-                    {/* Lista de citas renderizada desde el Hook */}
                     {loading ? (
                         <ActivityIndicator color="#1a73e8" />
                     ) : (

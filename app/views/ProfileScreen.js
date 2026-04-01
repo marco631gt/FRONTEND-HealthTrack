@@ -13,7 +13,6 @@ const ProfileScreen = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* Header Azul con Curva */}
             <View style={styles.blueHeader}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
                     <Ionicons name="arrow-back-circle" size={45} color="#fff" />
@@ -21,9 +20,7 @@ const ProfileScreen = () => {
                 <Text style={styles.headerTitle}>Profile</Text>
             </View>
 
-            {/* Tarjeta Blanca (Contenido) */}
             <View style={styles.contentCard}>
-                {/* Avatar Circular que sobresale */}
                 <View style={styles.avatarContainer}>
                     <View style={styles.avatarWrapper}>
                         <RNImage
@@ -35,28 +32,24 @@ const ProfileScreen = () => {
 
                 <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.formContent}>
 
-                    {/* Campo: Name */}
                     <Text style={styles.label}>Name</Text>
                     <View style={styles.inputBox}>
                         <Ionicons name="person-outline" size={20} color="#1a73e8" />
                         <Text style={styles.inputText}>{user?.name || 'Not available'}</Text>
                     </View>
 
-                    {/* Campo: Email */}
                     <Text style={styles.label}>Email Address</Text>
                     <View style={styles.inputBox}>
                         <MaterialCommunityIcons name="email-outline" size={20} color="#1a73e8" />
                         <Text style={styles.inputText}>{user?.email || 'Not available'}</Text>
                     </View>
 
-                    {/* Campo: Contact Phone */}
                     <Text style={styles.label}>Contact Phone</Text>
                     <View style={styles.inputBox}>
                         <Ionicons name="call-outline" size={20} color="#1a73e8" />
                         <Text style={styles.inputText}>{user?.phoneNumber || 'No phone set'}</Text>
                     </View>
 
-                    {/* Botón Log Out */}
                     <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
                         <Text style={styles.logoutText}>LOG OUT</Text>
                         <Ionicons name="log-out-outline" size={20} color="#fff" style={{ marginLeft: 10 }} />
@@ -81,12 +74,12 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#f0f7ff',
         borderTopLeftRadius: 50,
-        marginTop: 40, // Espacio para que el avatar respire
+        marginTop: 40, 
         paddingHorizontal: 25
     },
     avatarContainer: {
         alignItems: 'center',
-        marginTop: -60, // Sube el círculo para que quede a la mitad
+        marginTop: -60, 
         marginBottom: 20
     },
     avatarWrapper: {

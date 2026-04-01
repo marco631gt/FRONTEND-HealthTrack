@@ -8,7 +8,6 @@ export const useLogin = () => {
     const [password, setPassword] = useState("");
 
     const handleLogin = async () => {
-        // 1. Validaciones
         if (email.trim() === '' || password.trim() === '') {
             Alert.alert('Error', 'All the fields required');
             return;
@@ -19,13 +18,11 @@ export const useLogin = () => {
             return;
         }
 
-        // 2. MOCK LOGIN (Datos de prueba)
-        // Agregamos el rol al mockUser para que el sistema sepa a dónde ir
         const mockUser = {
             email: "test@test.com",
             password: "123456",
             name: "Usuario de Prueba",
-            role: "Patient" // <--- CAMBIA ESTO A "Doctor" para probar la otra pantalla
+            role: "Patient" // si cmabio a doctor para probar la otra
         };
 
         if (email !== mockUser.email || password !== mockUser.password) {
@@ -34,11 +31,11 @@ export const useLogin = () => {
         }
 
         try {
-            // 3. Guardar sesión y PERFIL
+            // Guardar sesión y PERFIL
             const fakeToken = "TOKEN-FAKE-123";
             await saveToken(fakeToken);
             
-            // IMPORTANTE: Guardamos el perfil con el ROL para el index.tsx
+            // Guardamos el perfil con el ROL para el index.tsx
             await setItem('user_profile', { 
                 role: mockUser.role, 
                 name: mockUser.name,
@@ -51,7 +48,6 @@ export const useLogin = () => {
                 { text: "OK" }
             ]);
 
-            // Limpiar
             setEmail("");
             setPassword("");
 

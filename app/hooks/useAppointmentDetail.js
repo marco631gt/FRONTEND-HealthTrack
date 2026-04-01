@@ -8,10 +8,10 @@ export const useAppointmentDetail = (appointmentId) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Simulamos la carga de una cita específica
+        // Simulacion de la cita
         const fetchDetail = () => {
             setLoading(true);
-            // Esto vendría de tu base de datos filtrando por ID
+            // Esto vendría de la base de datos filtrando por ID
             const mockDetail = {
                 id: appointmentId,
                 doctorName: "Dr. Alberto Garcia",
@@ -49,7 +49,7 @@ export const useAppointmentDetail = (appointmentId) => {
 
     const handleReschedule = () => {
         Alert.alert("Reschedule", "Redirecting to calendar...");
-        // Aquí podrías mandarlos de vuelta al Dashboard con los datos precargados
+        // Aquí se podria mandar de vuelta al Dashboard con los datos precargados
     };
 
     return {

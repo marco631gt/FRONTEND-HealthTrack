@@ -34,7 +34,6 @@ const RegisterScreen = () => {
                 </View>
 
                 <View style={styles.card}>
-                    {/* --- CAMPOS COMUNES --- */}
                     <Text style={styles.label}>Name</Text>
                     <TextInput
                         style={styles.input}
@@ -85,7 +84,6 @@ const RegisterScreen = () => {
                                 keyboardType="numeric"
                             />
 
-                    {/* --- CAMPOS CONDICIONALES PARA PACIENTE --- */}
                     {role === 'Patient' && (
                         <View>
                             <Text style={styles.label}>Age</Text>

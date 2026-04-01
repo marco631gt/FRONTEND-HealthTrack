@@ -5,7 +5,7 @@ export const usePatientDashboard = () => {
     const [doctors, setDoctors] = useState([
         { label: 'Dr. Garcia - Cardiología', value: '1' },
         { label: 'Dra. Rodriguez - Pediatría', value: '2' }
-    ]); // Esto luego vendrá de tu API o DB
+    ]); // Esto luego vendrá de la API
     const [appointments, setAppointments] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -15,7 +15,7 @@ export const usePatientDashboard = () => {
     const [reason, setReason] = useState("");
 
     const handleCreateAppointment = async () => {
-        // Aquí irá tu lógica de POST a la API
+        // Aquí voy a poner la logica con axios o con lo que diga Vidal para conectar la api
         console.log("Cita creada con:", { selectedDoctor, appointmentDate, reason });
     };
 

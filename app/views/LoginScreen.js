@@ -19,8 +19,7 @@ import { useLogin } from "../hooks/useLogin";
 import { useRouter } from 'expo-router';
 
 const LoginScreen = () => {
-    // Integramos tu hook ViewModel
-    const router = useRouter(); // Inicialización del router
+    const router = useRouter(); 
     const {
         email,
         setEmail,
@@ -29,7 +28,6 @@ const LoginScreen = () => {
         handleLogin
     } = useLogin();
 
-    // Estado local solo para el checkbox
     const [rememberMe, setRememberMe] = useState(false);
 
     return (
@@ -134,11 +132,10 @@ const LoginScreen = () => {
     );
 };
 
-// 🎨  DISEÑO 
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: "#fcfcfc", // Fondo casi blanco
+        backgroundColor: "#fcfcfc", 
     },
     keyboardView: {
         flex: 1,
@@ -149,17 +146,15 @@ const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
         paddingHorizontal: 25,
-        paddingTop: Platform.OS === "ios" ? 20 : 50, // Pequeño margen superior
+        paddingTop: Platform.OS === "ios" ? 20 : 50,
         alignItems: "center",
     },
-    // 1. Imagen de Cabecera
     headerImage: {
         width: '100%',
-        height: 180, // Ajusta según la imagen real
+        height: 180, 
         marginBottom: 20,
         marginTop: 10,
     },
-    // 2. Título (Doble texto para efecto sombra)
     titleContainer: {
         width: '100%',
         alignItems: 'center',
@@ -168,20 +163,19 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 48,
-        fontWeight: "900", // Muy negrita
-        color: "#1a4f8d", // Azul oscuro
-        fontFamily: Platform.OS === "ios" ? "AvenirNext-Heavy" : "Roboto", // Tipografía gruesa
+        fontWeight: "900", 
+        color: "#1a4f8d", 
+        fontFamily: Platform.OS === "ios" ? "AvenirNext-Heavy" : "Roboto", 
     },
     titleShadow: {
         fontSize: 48,
         fontWeight: "900",
-        color: "#b9d4ec", // Sombra azul clara
+        color: "#b9d4ec", 
         position: 'absolute',
-        top: 4, // Desplazamiento
-        left: 4, // Desplazamiento
+        top: 4, 
+        left: 4, 
         fontFamily: Platform.OS === "ios" ? "AvenirNext-Heavy" : "Roboto",
     },
-    // 3. Inputs
     formContainer: {
         width: '100%',
         marginBottom: 25,
@@ -194,14 +188,12 @@ const styles = StyleSheet.create({
         marginLeft: 5,
     },
     inputWrapper: {
-        backgroundColor: "#ecf4fa", // Color de fondo claro
+        backgroundColor: "#ecf4fa", 
         borderRadius: 15,
         borderWidth: 1,
-        borderColor: "#d1e4f4", // Borde claro
+        borderColor: "#d1e4f4", 
         marginBottom: 20,
-        // Sombra (Elevation Android)
         elevation: 3,
-        // Sombra (Shadows iOS)
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
@@ -209,19 +201,17 @@ const styles = StyleSheet.create({
     },
     input: {
         paddingHorizontal: 20,
-        paddingVertical: Platform.OS === "ios" ? 18 : 15, // Ajuste para el padding
+        paddingVertical: Platform.OS === "ios" ? 18 : 15, 
         fontSize: 16,
         color: "#333",
     },
-    // 4. Botón de Login
     loginButton: {
         width: '100%',
-        backgroundColor: "#2a75ca", // Azul del botón
+        backgroundColor: "#2a75ca", 
         paddingVertical: 18,
         borderRadius: 15,
         alignItems: "center",
         marginBottom: 25,
-        // Sombra del botón
         elevation: 5,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 3 },
@@ -233,7 +223,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: "bold",
     },
-    // 5. Options Container (Remember/Forgot)
     optionsContainer: {
         flexDirection: "row",
         alignItems: "center",
@@ -253,16 +242,15 @@ const styles = StyleSheet.create({
         marginLeft: 8,
     },
     verticalSeparator: {
-        height: '100%', // Usa el 100% del contenedor padre
+        height: '100%', 
         width: 2,
-        backgroundColor: "#9a9a9a", // Color del separador gris
+        backgroundColor: "#9a9a9a", 
     },
     forgotPasswordText: {
         fontSize: 14,
         fontWeight: "500",
         color: "#4a4a4a",
     },
-    // 6. Social Sign In
     socialTitle: {
         fontSize: 16,
         fontWeight: "600",
@@ -280,7 +268,6 @@ const styles = StyleSheet.create({
         marginHorizontal: 15,
         padding: 5,
     },
-    // 7. Sign Up Link
     signUpContainer: {
         flexDirection: "row",
         alignItems: "center",

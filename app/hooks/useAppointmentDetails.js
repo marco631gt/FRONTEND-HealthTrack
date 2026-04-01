@@ -9,7 +9,7 @@ export const useAppointmentDetails = (appointmentId) => {
     useEffect(() => {
         const loadData = async () => {
             setIsLoading(true);
-            // Simulamos una carga de datos
+            // Simulacion de carga de datss
             await new Promise(resolve => setTimeout(resolve, 800));
 
             // Datos de prueba (Mocks)
@@ -31,9 +31,9 @@ export const useAppointmentDetails = (appointmentId) => {
             status,
             notes
         });
-        // Aquí enviarías status y notes a tu backend
+        // Aquí enviaríamos el status y notes al backend
     };
 
-    // Retornamos status y setStatus
+    // return del status y setStatus
     return { patientData, notes, setNotes, status, setStatus, isLoading, handleFinish };
 };
