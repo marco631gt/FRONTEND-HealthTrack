@@ -1,20 +1,24 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Image as RNImage } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons"; 
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useAppointmentDetails } from "../hooks/useAppointmentDetails";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router"; // Importar useLocalSearchParams
 
-const AppointmentDetailsScreen = ({ appointmentId }) => {
+const AppointmentDetailsScreen = () => {
     const router = useRouter();
-    const { patientData, notes, setNotes, status, setStatus, isLoading, handleFinish } = useAppointmentDetails(appointmentId);
+    // Extraemos el ID que viene en la ruta (ej: /details?id=123)
+    const { id } = useLocalSearchParams();
 
-    if (isLoading) return <View style={styles.center}><Text>Loading...</Text></View>;
+    // Pasamos ese id al hook
+    const { appointment, notes, setNotes, status, setStatus, isLoading, handleFinish } = useAppointmentDetails(id);
+
+    if (isLoading) return <View style={styles.center}><Text>Cargando datos del paciente...</Text></View>;
 
     const statusOptions = [
-        { label: 'In Progress', value: 'In Progress', icon: 'clock-outline', color: '#f39c12' },
-        { label: 'Canceled', value: 'Canceled', icon: 'close-circle-outline', color: '#e74c3c' },
-        { label: 'Completed', value: 'Completed', icon: 'check-all', color: '#27ae60' },
+        { label: 'Pendiente', value: 'pendiente', icon: 'clock-outline', color: '#f39c12' },
+        { label: 'Cancelada', value: 'cancelada', icon: 'close-circle-outline', color: '#e74c3c' },
+        { label: 'Realizada', value: 'realizada', icon: 'check-all', color: '#27ae60' },
     ];
 
     return (
@@ -23,29 +27,35 @@ const AppointmentDetailsScreen = ({ appointmentId }) => {
                 <TouchableOpacity onPress={() => router.back()}>
                     <Ionicons name="arrow-back-circle" size={45} color="#fff" />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Appointment Details</Text>
+                <Text style={styles.headerTitle}>Detalles de la Cita</Text>
             </View>
 
             <View style={styles.contentCard}>
                 <ScrollView showsVerticalScrollIndicator={false}>
 
                     <View style={styles.idCard}>
-                        <RNImage 
-                            source={require('../assets/images/doctor-profile.png')} 
-                            style={styles.patientImg} 
+                        <RNImage
+                            source={require('../assets/images/doctor-profile.png')}
+                            style={styles.patientImg}
                         />
                         <View style={styles.idTextContainer}>
-                            <Text style={styles.idLabel}>Patient: <Text style={styles.idValue}>{patientData.name}</Text></Text>
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                <Text style={styles.idLabel}>Id: <Text style={styles.idValue}>{patientData.id}</Text></Text>
-                                <Text style={styles.idLabel}>Age: <Text style={styles.idValue}>{patientData.age}</Text></Text>
+                            <Text style={styles.idLabel}>Paciente: <Text style={styles.idValue}>{appointment?.paciente?.nombre || 'N/A'}</Text></Text>
+                            <Text style={styles.idLabel}>Email: <Text style={styles.idValue}>{appointment?.paciente?.email || 'N/A'}</Text></Text>
+
+                            <View style={{ flexDirection: 'row', marginTop: 5 }}>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={styles.idLabel}>Sangre: <Text style={styles.idValue}>{appointment?.paciente?.sangre || '--'}</Text></Text>
+                                </View>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={styles.idLabel}>Edad: <Text style={styles.idValue}>{appointment?.paciente?.edad || '--'}</Text></Text>
+                                </View>
                             </View>
-                            <Text style={styles.idLabel}>Blood: <Text style={styles.idValue}>{patientData.blood}</Text></Text>
-                            <Text style={styles.idLabel}>Allergies: <Text style={styles.idValue}>{patientData.allergies}</Text></Text>
+
+                            <Text style={styles.idLabel}>Motivo: <Text style={styles.idValue}>{appointment?.motivo || 'Consulta General'}</Text></Text>
                         </View>
                     </View>
 
-                    <Text style={styles.sectionTitle}>APPOINTMENT STATUS</Text>
+                    <Text style={styles.sectionTitle}>ESTADO DE LA CITA</Text>
                     <View style={styles.statusContainer}>
                         {statusOptions.map((option) => (
                             <TouchableOpacity
@@ -56,10 +66,10 @@ const AppointmentDetailsScreen = ({ appointmentId }) => {
                                 ]}
                                 onPress={() => setStatus(option.value)}
                             >
-                                <MaterialCommunityIcons 
-                                    name={option.icon} 
-                                    size={20} 
-                                    color={status === option.value ? "#fff" : "#666"} 
+                                <MaterialCommunityIcons
+                                    name={option.icon}
+                                    size={20}
+                                    color={status === option.value ? "#fff" : "#666"}
                                 />
                                 <Text style={[
                                     styles.statusText,
@@ -71,20 +81,20 @@ const AppointmentDetailsScreen = ({ appointmentId }) => {
                         ))}
                     </View>
 
-                    <Text style={styles.sectionTitle}>CONSULTATION NOTES</Text>
+                    <Text style={styles.sectionTitle}>NOTAS MÉDICAS</Text>
                     <View style={styles.notesBox}>
-                        <Text style={styles.notesLabel}>Reason:</Text>
+                        <Text style={styles.notesLabel}>Diagnóstico y observaciones:</Text>
                         <TextInput
                             style={styles.input}
                             multiline
-                            placeholder="Type notes here..."
+                            placeholder="Escribe las notas de la consulta aquí..."
                             value={notes}
                             onChangeText={setNotes}
                         />
                     </View>
 
                     <TouchableOpacity style={styles.finishBtn} onPress={handleFinish}>
-                        <Text style={styles.finishBtnText}>FINISH CONSULTATION</Text>
+                        <Text style={styles.finishBtnText}>FINALIZAR CONSULTA</Text>
                     </TouchableOpacity>
                 </ScrollView>
             </View>
@@ -103,12 +113,12 @@ const styles = StyleSheet.create({
     idLabel: { color: 'rgba(255,255,255,0.7)', fontSize: 12, fontWeight: 'bold', marginBottom: 2 },
     idValue: { color: '#fff', fontSize: 15 },
     sectionTitle: { fontSize: 18, fontWeight: 'bold', color: '#1a4f8d', marginTop: 25, marginBottom: 15 },
-    
-    statusContainer: { 
-        flexDirection: 'row', 
-        justifyContent: 'space-between', 
-        backgroundColor: '#fff', 
-        borderRadius: 15, 
+
+    statusContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        backgroundColor: '#fff',
+        borderRadius: 15,
         padding: 5,
         elevation: 3,
         shadowColor: '#000',

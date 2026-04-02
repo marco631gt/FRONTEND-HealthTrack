@@ -7,32 +7,46 @@ import { useDoctorDashboard } from '../hooks/useDoctorDashboard';
 import { useRouter } from 'expo-router';
 
 const DoctorDashboardScreen = () => {
-    const { doctorName, totalPatients, schedule } = useDoctorDashboard();
+    const { doctorName, totalPatients, schedule, selectedDate, changeDate, isLoading } = useDoctorDashboard(); const router = useRouter();
 
-    const renderScheduleCard = (item) => (
-        <View key={item.id} style={styles.scheduleCard}>
-            <View style={styles.appointmentInfoContainer}>
-                <View style={styles.cardHeader}>
-                    <Ionicons name="time-outline" size={22} color="#555" />
-                    <Text style={styles.cardLabel}>TIME:</Text>
-                    <Text style={styles.cardValue}>{item.time}</Text>
+    const renderScheduleCard = (item) => {
+        // Formatear la fecha para mostrar solo la hora
+        const appointmentDate = new Date(item.fecha);
+        const timeStr = appointmentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        return (
+            <View key={item._id} style={styles.scheduleCard}>
+                <View style={styles.appointmentInfoContainer}>
+                    <View style={styles.cardHeader}>
+                        <Ionicons name="time-outline" size={22} color="#555" />
+                        <Text style={styles.cardLabel}>HORA:</Text>
+                        <Text style={styles.cardValue}>{timeStr}</Text>
+                    </View>
+                    <View style={styles.cardContent}>
+                        <Ionicons name="person-circle-outline" size={22} color="#555" />
+                        <Text style={styles.cardLabel}>PACIENTE:</Text>
+                        {/* Accedemos a la propiedad según el JSON del backend */}
+                        <Text style={styles.cardValue}>{item.paciente?.nombre || "N/A"}</Text>
+                    </View>
                 </View>
-                <View style={styles.cardContent}>
-                    <Ionicons name="person-circle-outline" size={22} color="#555" />
-                    <Text style={styles.cardLabel}>NAME:</Text>
-                    <Text style={styles.cardValue}>{item.name}</Text>
-                </View>
+
+                <TouchableOpacity
+                    style={styles.detailsButton}
+                    onPress={() => router.push({
+                        pathname: '/views/AppointmentDetailsScreen', // Reutilizamos la pantalla de detalle
+                        params: { id: item._id }
+                    })}
+                >
+                    <Ionicons name="chevron-forward-circle" size={32} color="#1a73e8" />
+                </TouchableOpacity>
             </View>
-            <TouchableOpacity
-                style={styles.detailsButton}
-                onPress={() => router.push(`/doctor/appointment/${item.id}`)}
-            >
-                <Ionicons name="chevron-down-circle" size={28} color="#007bff" />
-            </TouchableOpacity>
-        </View>
-    );
+        );
+    };
 
-    const router = useRouter();
+    if (isLoading) {
+        return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text>Cargando Agenda...</Text></View>;
+    }
+
     return (
         <View style={{ flex: 1, backgroundColor: '#1a73e8' }}>
             <Stack.Screen options={{ headerShown: false }} />
@@ -93,6 +107,28 @@ const DoctorDashboardScreen = () => {
                                 <Text style={styles.patientsText}>{totalPatients} Total Patients Today</Text>
                             </View>
                         </View>
+
+                        <Text style={styles.sectionTitle}>DATE FILTER</Text>
+                        <View style={styles.dateFilterContainer}>
+                            <TouchableOpacity onPress={() => changeDate(-1)}>
+                                <Ionicons name="chevron-back" size={24} color="#1a73e8" />
+                            </TouchableOpacity>
+
+                            <View style={styles.dateInfo}>
+                                <Ionicons name="calendar" size={18} color="#1a73e8" />
+                                <Text style={styles.dateText}>
+                                    {selectedDate.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
+                                </Text>
+                            </View>
+
+                            <TouchableOpacity onPress={() => changeDate(1)}>
+                                <Ionicons name="chevron-forward" size={24} color="#1a73e8" />
+                            </TouchableOpacity>
+                        </View>
+
+                        <Text style={styles.sectionTitle}>SCHEDULE FOR THIS DAY</Text>
+                        {/* ... resto del mapeo de schedule */}
+
 
                         <Text style={styles.sectionTitle}>TODAY'S SCHEDULE</Text>
 
@@ -233,6 +269,18 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     viewAllButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
+    dateFilterContainer: {
+        flexDirection: 'row',
+        backgroundColor: '#fff',
+        borderRadius: 15,
+        padding: 15,
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 10,
+        elevation: 2,
+    },
+    dateInfo: { flexDirection: 'row', alignItems: 'center' },
+    dateText: { fontSize: 16, fontWeight: '600', color: '#333', marginLeft: 8, textTransform: 'capitalize' },
 });
 
 export default DoctorDashboardScreen;

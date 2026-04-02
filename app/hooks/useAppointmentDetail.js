@@ -1,61 +1,70 @@
 import { useState, useEffect } from "react";
 import { Alert } from "react-native";
 import { useRouter } from "expo-router";
+import api from "../models/auth";
 
 export const useAppointmentDetail = (appointmentId) => {
     const router = useRouter();
     const [appointment, setAppointment] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        // Simulacion de la cita
-        const fetchDetail = () => {
-            setLoading(true);
-            // Esto vendría de la base de datos filtrando por ID
-            const mockDetail = {
-                id: appointmentId,
-                doctorName: "Dr. Alberto Garcia",
-                specialty: "Cardiology",
-                date: "2026-03-25",
-                time: "10:30 AM",
-                reason: "Chest pain and dizziness",
-                doctorDetails: "Patient shows stable rhythm. Suggested blood test for cholesterol. Avoid caffeine for 48 hours.", // Lo que puso el doctor
-                status: "Confirmed"
-            };
-            setAppointment(mockDetail);
-            setLoading(false);
-        };
+    const fetchDetailFromList = async () => {
+        if (!appointmentId) return;
 
-        fetchDetail();
+        try {
+            setLoading(true);
+            // Obtenemos todas las citas del paciente
+            const response = await api.get("citas/mis-citas");
+            
+            // Buscamos la cita específica por ID dentro del arreglo
+            const selectedAppt = response.data.find(item => item._id === appointmentId);
+            
+            if (selectedAppt) {
+                setAppointment(selectedAppt);
+            } else {
+                console.error("Cita no encontrada en la lista");
+            }
+        } catch (error) {
+            console.error("Error fetching detail:", error);
+            Alert.alert("Error", "No se pudo cargar la información");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchDetailFromList();
     }, [appointmentId]);
 
     const handleCancel = () => {
         Alert.alert(
-            "Cancel Appointment",
-            "Are you sure you want to cancel this appointment?",
+            "Cancelar Cita",
+            "¿Estás seguro de que deseas cancelar esta cita?",
             [
                 { text: "No", style: "cancel" },
-                { 
-                    text: "Yes, Cancel", 
+                {
+                    text: "Sí, Cancelar",
                     style: "destructive",
-                    onPress: () => {
-                        console.log("Cita cancelada");
-                        router.back();
+                    onPress: async () => {
+                        try {
+                            setLoading(true);
+                            // Según tu doc: PUT /api/citas/estado
+                            await api.put("citas/estado", {
+                                citaId: appointmentId,
+                                estado: "cancelada" // Los pacientes solo pueden cancelar
+                            });
+                            Alert.alert("Éxito", "Cita cancelada");
+                            router.back();
+                        } catch (error) {
+                            Alert.alert("Error", "No tienes permiso o la cita no se pudo cancelar");
+                        } finally {
+                            setLoading(false);
+                        }
                     }
                 }
             ]
         );
     };
 
-    const handleReschedule = () => {
-        Alert.alert("Reschedule", "Redirecting to calendar...");
-        // Aquí se podria mandar de vuelta al Dashboard con los datos precargados
-    };
-
-    return {
-        appointment,
-        loading,
-        handleCancel,
-        handleReschedule
-    };
+    return { appointment, loading, handleCancel };
 };

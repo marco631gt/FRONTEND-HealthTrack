@@ -1,34 +1,102 @@
 import { useState, useEffect } from "react";
-import { getItem } from "../services/storageService";
+import { Alert } from "react-native";
+import api from "../models/auth";
 
 export const usePatientDashboard = () => {
-    const [doctors, setDoctors] = useState([
-        { label: 'Dr. Garcia - Cardiología', value: '1' },
-        { label: 'Dra. Rodriguez - Pediatría', value: '2' }
-    ]); // Esto luego vendrá de la API
+    const [doctors, setDoctors] = useState([]);
     const [appointments, setAppointments] = useState([]);
     const [loading, setLoading] = useState(false);
 
     // Estados del formulario
-    const [selectedDoctor, setSelectedDoctor] = useState(null);
-    const [appointmentDate, setAppointmentDate] = useState("");
+    const [selectedDoctorId, setSelectedDoctorId] = useState(null);
+    const [appointmentDate, setAppointmentDate] = useState(""); 
+    const [selectedHour, setSelectedHour] = useState(null); 
     const [reason, setReason] = useState("");
+    const [availableSlots, setAvailableSlots] = useState([]);
+    
+    // Control del calendario nativo
+    const [showDatePicker, setShowDatePicker] = useState(false);
+
+    const allSlots = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00"];
+
+    useEffect(() => {
+        fetchInitialData();
+    }, []);
+
+    useEffect(() => {
+        if (selectedDoctorId && appointmentDate) {
+            const occupied = appointments
+                .filter(appt => 
+                    appt.medico?._id === selectedDoctorId && 
+                    appt.fecha.startsWith(appointmentDate) &&
+                    appt.estado !== 'cancelada'
+                )
+                .map(appt => {
+                    const d = new Date(appt.fecha);
+                    return `${d.getHours().toString().padStart(2, '0')}:00`;
+                });
+
+            const free = allSlots.filter(slot => !occupied.includes(slot));
+            setAvailableSlots(free);
+        } else {
+            setAvailableSlots([]);
+        }
+    }, [selectedDoctorId, appointmentDate, appointments]);
+
+    const fetchInitialData = async () => {
+        try {
+            setLoading(true);
+            const [docsRes, apptsRes] = await Promise.all([
+                api.get('citas/medicos'),
+                api.get('citas/mis-citas')
+            ]);
+            setDoctors(docsRes.data);
+            setAppointments(apptsRes.data);
+        } catch (error) {
+            Alert.alert("Error", "No se pudo obtener la información");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleCreateAppointment = async () => {
-        // Aquí voy a poner la logica con axios o con lo que diga Vidal para conectar la api
-        console.log("Cita creada con:", { selectedDoctor, appointmentDate, reason });
+        if (!selectedDoctorId || !appointmentDate || !selectedHour || !reason.trim()) {
+            Alert.alert("Error", "Completa todos los campos");
+            return;
+        }
+        try {
+            setLoading(true);
+            const combinedDate = `${appointmentDate}T${selectedHour}:00`;
+            const response = await api.post('citas/crear', {
+                medicoId: selectedDoctorId,
+                fecha: combinedDate,
+                motivo: reason
+            });
+
+            if (response.status === 201) {
+                Alert.alert("¡Éxito!", "Cita reservada");
+                setSelectedDoctorId(null);
+                setAppointmentDate("");
+                setSelectedHour(null);
+                setReason("");
+                fetchInitialData();
+            }
+        } catch (error) {
+            Alert.alert("Error", error.response?.data?.message || "Error al crear");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return {
-        doctors,
-        appointments,
-        loading,
-        selectedDoctor,
-        setSelectedDoctor,
-        appointmentDate,
-        setAppointmentDate,
-        reason,
-        setReason,
-        handleCreateAppointment
+        doctors, appointments, loading,
+        selectedDoctorId, setSelectedDoctorId,
+        appointmentDate, setAppointmentDate,
+        selectedHour, setSelectedHour,
+        reason, setReason,
+        availableSlots,
+        showDatePicker, setShowDatePicker, // Nuevos para el calendario
+        handleCreateAppointment,
+        refreshAppointments: fetchInitialData
     };
 };

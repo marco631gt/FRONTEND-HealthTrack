@@ -20,7 +20,7 @@ export default function Index() {
   }
   
   if (userRole === 'Patient') {
-    return <PatientDashboardScreen />; 
+    return <PatientDashboardScreen />;
   }
 
   return <LoginScreen />;

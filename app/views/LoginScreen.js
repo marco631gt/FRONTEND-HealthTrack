@@ -18,8 +18,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLogin } from "../hooks/useLogin";
 import { useRouter } from 'expo-router';
 
+
 const LoginScreen = () => {
-    const router = useRouter(); 
+    const router = useRouter();
     const {
         email,
         setEmail,
@@ -29,6 +30,7 @@ const LoginScreen = () => {
     } = useLogin();
 
     const [rememberMe, setRememberMe] = useState(false);
+
 
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -135,7 +137,7 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: "#fcfcfc", 
+        backgroundColor: "#fcfcfc",
     },
     keyboardView: {
         flex: 1,
@@ -151,7 +153,7 @@ const styles = StyleSheet.create({
     },
     headerImage: {
         width: '100%',
-        height: 180, 
+        height: 180,
         marginBottom: 20,
         marginTop: 10,
     },
@@ -163,17 +165,17 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 48,
-        fontWeight: "900", 
-        color: "#1a4f8d", 
-        fontFamily: Platform.OS === "ios" ? "AvenirNext-Heavy" : "Roboto", 
+        fontWeight: "900",
+        color: "#1a4f8d",
+        fontFamily: Platform.OS === "ios" ? "AvenirNext-Heavy" : "Roboto",
     },
     titleShadow: {
         fontSize: 48,
         fontWeight: "900",
-        color: "#b9d4ec", 
+        color: "#b9d4ec",
         position: 'absolute',
-        top: 4, 
-        left: 4, 
+        top: 4,
+        left: 4,
         fontFamily: Platform.OS === "ios" ? "AvenirNext-Heavy" : "Roboto",
     },
     formContainer: {
@@ -188,10 +190,10 @@ const styles = StyleSheet.create({
         marginLeft: 5,
     },
     inputWrapper: {
-        backgroundColor: "#ecf4fa", 
+        backgroundColor: "#ecf4fa",
         borderRadius: 15,
         borderWidth: 1,
-        borderColor: "#d1e4f4", 
+        borderColor: "#d1e4f4",
         marginBottom: 20,
         elevation: 3,
         shadowColor: "#000",
@@ -201,13 +203,13 @@ const styles = StyleSheet.create({
     },
     input: {
         paddingHorizontal: 20,
-        paddingVertical: Platform.OS === "ios" ? 18 : 15, 
+        paddingVertical: Platform.OS === "ios" ? 18 : 15,
         fontSize: 16,
         color: "#333",
     },
     loginButton: {
         width: '100%',
-        backgroundColor: "#2a75ca", 
+        backgroundColor: "#2a75ca",
         paddingVertical: 18,
         borderRadius: 15,
         alignItems: "center",
@@ -242,9 +244,9 @@ const styles = StyleSheet.create({
         marginLeft: 8,
     },
     verticalSeparator: {
-        height: '100%', 
+        height: '100%',
         width: 2,
-        backgroundColor: "#9a9a9a", 
+        backgroundColor: "#9a9a9a",
     },
     forgotPasswordText: {
         fontSize: 14,

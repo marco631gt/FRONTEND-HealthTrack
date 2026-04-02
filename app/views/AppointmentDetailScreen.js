@@ -2,85 +2,82 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router"; // Añadimos useLocalSearchParams
 import { useAppointmentDetail } from "../hooks/useAppointmentDetail";
 
 const AppointmentDetailScreen = () => {
     const router = useRouter();
-    const { appointment, loading, handleCancel, handleReschedule } = useAppointmentDetail("123");
+    const { id } = useLocalSearchParams();
+    const { appointment, loading, handleCancel } = useAppointmentDetail(id);
 
-    if (loading) {
-        return (
-            <View style={styles.loaderContainer}>
-                <ActivityIndicator size="large" color="#1a73e8" />
-            </View>
-        );
-    }
+    if (loading) return <View style={styles.loaderContainer}><ActivityIndicator size="large" color="#1a73e8" /></View>;
+    if (!appointment) return <View style={styles.loaderContainer}><Text>Cita no encontrada</Text></View>;
+
+    const dateObj = new Date(appointment.fecha);
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* botón de volver */}
+            {/* Header */}
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()}>
                     <Ionicons name="arrow-back" size={28} color="#fff" />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Appointment Details</Text>
-                <View style={{ width: 28 }} /> 
+                <Text style={styles.headerTitle}>Detalles de la Cita</Text>
+                <View style={{ width: 28 }} />
             </View>
 
             <View style={styles.contentCard}>
                 <ScrollView showsVerticalScrollIndicator={false}>
-                    
+
+                    {/* Información del Médico */}
                     <View style={styles.infoSection}>
                         <View style={styles.iconCircle}>
                             <MaterialCommunityIcons name="doctor" size={35} color="#1a73e8" />
                         </View>
-                        <Text style={styles.doctorName}>{appointment.doctorName}</Text>
-                        <Text style={styles.specialtyText}>{appointment.specialty}</Text>
+                        <Text style={styles.doctorName}>{appointment.medico?.nombre}</Text>
+                        <Text style={styles.specialtyText}>Estado: {appointment.estado.toUpperCase()}</Text>
                     </View>
 
                     <View style={styles.divider} />
 
+                    {/* Fecha y Hora */}
                     <View style={styles.rowInfo}>
                         <View style={styles.detailItem}>
                             <Ionicons name="calendar-outline" size={20} color="#1a73e8" />
-                            <Text style={styles.detailLabel}>Date</Text>
-                            <Text style={styles.detailValue}>{appointment.date}</Text>
+                            <Text style={styles.detailLabel}>Fecha</Text>
+                            <Text style={styles.detailValue}>{dateObj.toLocaleDateString()}</Text>
                         </View>
                         <View style={styles.detailItem}>
                             <Ionicons name="time-outline" size={20} color="#1a73e8" />
-                            <Text style={styles.detailLabel}>Time</Text>
-                            <Text style={styles.detailValue}>{appointment.time}</Text>
+                            <Text style={styles.detailLabel}>Hora</Text>
+                            <Text style={styles.detailValue}>{dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
                         </View>
                     </View>
 
-                    <Text style={styles.sectionTitle}>Your Reason for Visit</Text>
+                    {/* Motivo (Lo que el paciente escribió) */}
+                    <Text style={styles.sectionTitle}>Motivo de la consulta</Text>
                     <View style={styles.reasonBox}>
-                        <Text style={styles.reasonText}>{appointment.reason}</Text>
+                        <Text style={styles.reasonText}>{appointment.motivo}</Text>
+                        <Text style={{ fontSize: 10, color: '#999', marginTop: 5 }}>Prioridad: {appointment.prioridad}</Text>
                     </View>
 
-                    <Text style={[styles.sectionTitle, { color: '#2e7d32' }]}>Doctor's Clinical Notes</Text>
+                    {/* Notas Médicas (Si existen) */}
+                    <Text style={[styles.sectionTitle, { color: '#2e7d32' }]}>Notas del Médico</Text>
                     <View style={[styles.reasonBox, styles.doctorNoteBox]}>
                         <Text style={styles.doctorNoteText}>
-                            {appointment.doctorDetails || "No notes added yet."}
+                            {/* Tu backend dice que el paciente NO ve notasMedicas, pero lo ponemos por si acaso el rol cambia */}
+                            {appointment.notasMedicas || "Las notas estarán disponibles cuando el médico realice la consulta."}
                         </Text>
                     </View>
 
-                    <View style={styles.actionContainer}>
-                        <TouchableOpacity 
-                            style={styles.btnReschedule} 
-                            onPress={handleReschedule}
-                        >
-                            <Text style={styles.btnTextBlue}>Reschedule</Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity 
-                            style={styles.btnCancel} 
-                            onPress={handleCancel}
-                        >
-                            <Text style={styles.btnTextRed}>Cancel Appointment</Text>
-                        </TouchableOpacity>
-                    </View>
+                    {/* Botón de Cancelar (Solo si no está ya cancelada o realizada) */}
+                    {appointment.estado === 'pendiente' && (
+                        <View style={styles.actionContainer}>
+                            <TouchableOpacity style={styles.btnCancel} onPress={handleCancel}>
+                                <Text style={styles.btnTextRed}>Cancelar Cita</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
 
                 </ScrollView>
             </View>

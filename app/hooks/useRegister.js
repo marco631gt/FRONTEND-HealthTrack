@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Alert } from "react-native";
 import { validate } from "../helpers/validators";
+import api from '../models/auth'; // Importamos tu instancia de axios
 import { saveToken, setItem } from "../services/storageService";
 import { useRouter } from 'expo-router';
 
@@ -9,7 +10,8 @@ export const useRegister = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [role, setRole] = useState('Patient');
+    const [role, setRole] = useState('Patient'); // 'Patient' o 'Doctor' en la UI
+    const [loading, setLoading] = useState(false);
 
     const [age, setAge] = useState('');
     const [sex, setSex] = useState('');
@@ -19,8 +21,7 @@ export const useRegister = () => {
     const [phoneNumber, setPhoneNumber] = useState('');
 
     const handleRegister = async () => {
-
-        
+        // 1. Validaciones de campos obligatorios
         if (email.trim() === '' || password.trim() === '' || name.trim() === '') {
             Alert.alert('Error', 'All the fields required');
             return;
@@ -36,6 +37,7 @@ export const useRegister = () => {
             return;
         }
 
+        // Validaciones extra si es Paciente
         if (role === 'Patient') {
             if (!age.trim() || isNaN(age) || parseInt(age) <= 0) {
                 Alert.alert("Error", "Please enter a valid age");
@@ -45,77 +47,61 @@ export const useRegister = () => {
                 Alert.alert("Error", "Blood type is required");
                 return;
             }
-            if (!allergies.trim()) {
-                Alert.alert("Error", "Allergies field is required (write 'None' if applicable)");
-                return;
-            }
-            if (!chronicConditions.trim()) {
-                Alert.alert("Error", "Chronic conditions field is required (write 'None' if applicable)");
-                return;
-            }
         }
 
-        // Creación del objeto de usuario
-        const newUser = {
-            name,
-            email,
-            password,
-            role,
-            phoneNumber,
-            ...(role === 'Patient' && {
-                age: parseInt(age),
-                sex,
-                bloodType: bloodType.toUpperCase(),
-                allergies,
-                chronicConditions,
-            }),
-            createdAt: new Date().toISOString()
-        };
-
         try {
-            const fakeToken = "REGISTER-TOKEN-999";
-            await saveToken(fakeToken);
-            await setItem('user_profile', newUser);
+            setLoading(true);
 
-            const onConfirmSuccess = () => {
-                setName('');
-                setEmail('');
-                setPassword('');
-                setRole('Patient');
-                setPhoneNumber('');
-                setAge('');
-                setSex('');
-                setBloodType('');
-                setAllergies('');
-                setChronicConditions('');
+            // 2. MAPEO PARA EL BACKEND (Enum fix)
+            // Convertimos 'Patient' -> 'paciente' y 'Doctor' -> 'medico'
+            const rolParaBackend = role === 'Patient' ? 'paciente' : 'medico';
 
-                router.replace('./LoginScreen'); 
+            // 3. Creación del objeto EXACTO que espera tu API
+            const registerData = {
+                nombre: name, // Tu API usa "nombre" no "name"
+                email: email.toLowerCase().trim(),
+                password: password,
+                rol: rolParaBackend,
+                // Si tu API soporta estos campos extras, se enviarán aquí:
+                telefono: phoneNumber, 
+                ...(role === 'Patient' && {
+                    edad: parseInt(age),
+                    sexo: sex,
+                    tipoSangre: bloodType.toUpperCase(),
+                    alergias: allergies,
+                    condicionesCronicas: chronicConditions,
+                })
             };
 
-            if (role === 'Patient') {
+            // 4. Petición Real a Render
+            const response = await api.post('auth/register', registerData);
+            console.log("Respuesta Registro:", response.data);
+
+            const onConfirmSuccess = () => {
+                // Resetear estados
+                setName(''); setEmail(''); setPassword('');
+                setRole('Patient'); setPhoneNumber(''); setAge('');
+                setSex(''); setBloodType(''); setAllergies('');
+                setChronicConditions('');
+
+                router.replace('/views/LoginScreen'); 
+            };
+
+            // 5. Manejo de éxito
+            if (response.data) {
                 Alert.alert(
                     '¡Éxito!',
-                    `Usuario ${name} registrado como ${role}\n\n` +
-                    `Información Médica:\n` +
-                    `• Edad: ${age}\n` +
-                    `• Sexo: ${sex}\n` +
-                    `• Sangre: ${bloodType.toUpperCase()}\n` +
-                    `• Alergias: ${allergies}\n` +
-                    `• Condiciones: ${chronicConditions}\n` +
-                    `• Phone Number: ${phoneNumber}`,
-                    [{ text: 'OK', onPress: onConfirmSuccess }]
-                );
-            } else {
-                Alert.alert(
-                    '¡Éxito!', 
-                    `Usuario ${name} registrado como ${role} and your phone number is: ${phoneNumber}`,
-                    [{ text: 'OK', onPress: onConfirmSuccess }]
+                    `Usuario ${name} registrado correctamente como ${role}.`,
+                    [{ text: 'Ir al Login', onPress: onConfirmSuccess }]
                 );
             }
 
         } catch (error) {
-            console.error("Error en el registro:", error);
-            Alert.alert("Error", "No se pudieron guardar los datos del registro.");
+            console.error("Error en el registro:", error.response?.data || error.message);
+            const serverMsg = error.response?.data?.message || "No se pudo completar el registro.";
+            Alert.alert("Error", serverMsg);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -130,6 +116,7 @@ export const useRegister = () => {
         bloodType, setBloodType,
         allergies, setAllergies,
         chronicConditions, setChronicConditions,
+        loading,
         handleRegister
     };
 };
