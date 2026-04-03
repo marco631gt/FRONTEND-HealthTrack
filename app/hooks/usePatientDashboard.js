@@ -53,7 +53,7 @@ export const usePatientDashboard = () => {
             setDoctors(docsRes.data);
             setAppointments(apptsRes.data);
         } catch (error) {
-            Alert.alert("Error", "No se pudo obtener la información");
+            Alert.alert("Error", "The information could not be retrieved");
         } finally {
             setLoading(false);
         }
@@ -61,7 +61,7 @@ export const usePatientDashboard = () => {
 
     const handleCreateAppointment = async () => {
         if (!selectedDoctorId || !appointmentDate || !selectedHour || !reason.trim()) {
-            Alert.alert("Error", "Completa todos los campos");
+            Alert.alert("Error", "Complete the fields");
             return;
         }
         try {
@@ -74,7 +74,7 @@ export const usePatientDashboard = () => {
             });
 
             if (response.status === 201) {
-                Alert.alert("¡Éxito!", "Cita reservada");
+                Alert.alert("Succesfull!", "Appointment booked");
                 setSelectedDoctorId(null);
                 setAppointmentDate("");
                 setSelectedHour(null);
@@ -82,7 +82,7 @@ export const usePatientDashboard = () => {
                 fetchInitialData();
             }
         } catch (error) {
-            Alert.alert("Error", error.response?.data?.message || "Error al crear");
+            Alert.alert("Error", error.response?.data?.message || "Error to create");
         } finally {
             setLoading(false);
         }

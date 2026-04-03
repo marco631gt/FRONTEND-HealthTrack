@@ -17,7 +17,7 @@ export const useDoctorDashboard = () => {
             const response = await api.get("citas/mis-citas");
             setAllAppointments(response.data || []);
         } catch (error) {
-            console.error("Error cargando citas:", error);
+            console.error("Error loading schedule:", error);
         } finally {
             setIsLoading(false);
         }

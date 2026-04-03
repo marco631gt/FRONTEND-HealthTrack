@@ -24,7 +24,7 @@ export const useAppointmentDetails = (appointmentId) => {
                     setStatus(found.estado || "pendiente");
                 }
             } catch (error) {
-                Alert.alert("Error", "No se pudo conectar con el servidor");
+                Alert.alert("Error", "Unable to connect to the server");
             } finally {
                 setIsLoading(false);
             }
@@ -34,7 +34,7 @@ export const useAppointmentDetails = (appointmentId) => {
 
     const handleFinish = async () => {
         if (!notes.trim()) {
-            Alert.alert("Aviso", "Por favor, agrega notas antes de finalizar");
+            Alert.alert("Notice", "Please add any notes before finalizing");
             return;
         }
 
@@ -52,10 +52,10 @@ export const useAppointmentDetails = (appointmentId) => {
                 estado: status
             });
 
-            Alert.alert("Éxito", "Consulta guardada correctamente");
+            Alert.alert("Éxito", "Appointment saved succesfully");
             router.back();
         } catch (error) {
-            Alert.alert("Error", "No se pudieron guardar los cambios");
+            Alert.alert("Error", "The changes could not be saved");
         }
     };
 

@@ -30,22 +30,22 @@ export const useProfile = () => {
             router.replace('/views/LoginScreen');
         }, 100);
     } catch (error) {
-        console.error("Error al cerrar sesión:", error);
+        console.error("Error Log out:", error);
     }
 };
 
     const handleLogout = () => {
         Alert.alert(
-            "Cerrar Sesión", 
-            "¿Estás seguro de que deseas salir de tu cuenta?",
+            "Log Out", 
+            "Are you sure you want to log out of your account?",
             [
                 {
-                    text: "Cancelar",
+                    text: "Cancel",
                     onPress: () => console.log("Cancelado"),
                     style: "cancel"
                 },
                 { 
-                    text: "Sí, salir", 
+                    text: "Yes, logout", 
                     onPress: executeLogout,
                     style: "destructive" 
                 }

@@ -146,7 +146,7 @@ const RegisterScreen = () => {
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.footer} onPress={() => router.back()}>
-                        <Text style={styles.footerText}>Already have an account? <Text style={styles.bold}>Login In</Text></Text>
+                        <Text style={styles.footerText}>Already have an account? <Text style={styles.bold}>Log In</Text></Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>

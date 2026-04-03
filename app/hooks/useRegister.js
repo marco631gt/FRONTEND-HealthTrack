@@ -90,15 +90,15 @@ export const useRegister = () => {
             // 5. Manejo de éxito
             if (response.data) {
                 Alert.alert(
-                    '¡Éxito!',
-                    `Usuario ${name} registrado correctamente como ${role}.`,
+                    '¡Succesfully!',
+                    `User ${name} correctly registered as ${role}.`,
                     [{ text: 'Ir al Login', onPress: onConfirmSuccess }]
                 );
             }
 
         } catch (error) {
-            console.error("Error en el registro:", error.response?.data || error.message);
-            const serverMsg = error.response?.data?.message || "No se pudo completar el registro.";
+            console.error("Register Error:", error.response?.data || error.message);
+            const serverMsg = error.response?.data?.message || "The registration could not be completed.";
             Alert.alert("Error", serverMsg);
         } finally {
             setLoading(false);

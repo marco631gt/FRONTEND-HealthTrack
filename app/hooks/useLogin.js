@@ -14,12 +14,12 @@ export const useLogin = () => {
     const handleLogin = async () => {
         // 1. Validaciones iniciales (No gastamos recursos de red si los campos están mal)
         if (email.trim() === '' || password.trim() === '') {
-            Alert.alert('Error', 'Todos los campos son obligatorios');
+            Alert.alert('Error', 'All the fields are required');
             return;
         }
 
         if (!validate("email", email)) {
-            Alert.alert("Error", "Email inválido");
+            Alert.alert("Error", "Email not valid");
             return;
         }
 
@@ -84,7 +84,7 @@ export const useLogin = () => {
                 await setItem("last_login", new Date().toISOString());
 
                 // 5. Éxito
-                Alert.alert("Bienvenido", `Hola, ${nombre}`, [
+                Alert.alert("Welcome", `Hi, ${nombre}`, [
                     {
                         text: "OK",
                         onPress: () => router.replace("/") // Al dar OK, forzamos ir al Index
@@ -96,7 +96,7 @@ export const useLogin = () => {
                 setPassword("");
 
             } else {
-                Alert.alert("Error", "No se pudo obtener la información del usuario");
+                Alert.alert("Error", "The user's information could not be retrieved");
             }
 
         } catch (error) {
@@ -104,8 +104,8 @@ export const useLogin = () => {
             console.error("Login Error:", error);
 
             // Si la API mandó un mensaje de error (como el "msg" de tu respuesta de Postman) lo usamos
-            const message = error.response?.data?.msg || "Credenciales incorrectas o problema de conexión";
-            Alert.alert("Error de inicio de sesión", message);
+            const message = error.response?.data?.msg || "Incorrect credentials or connection problem";
+            Alert.alert("Login error", message);
 
         } finally {
             setLoading(false);

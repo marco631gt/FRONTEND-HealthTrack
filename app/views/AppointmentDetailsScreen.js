@@ -16,9 +16,9 @@ const AppointmentDetailsScreen = () => {
     if (isLoading) return <View style={styles.center}><Text>Cargando datos del paciente...</Text></View>;
 
     const statusOptions = [
-        { label: 'Pendiente', value: 'pendiente', icon: 'clock-outline', color: '#f39c12' },
-        { label: 'Cancelada', value: 'cancelada', icon: 'close-circle-outline', color: '#e74c3c' },
-        { label: 'Realizada', value: 'realizada', icon: 'check-all', color: '#27ae60' },
+        { label: 'Pending', value: 'pendiente', icon: 'clock-outline', color: '#f39c12' },
+        { label: 'Cancel', value: 'cancelada', icon: 'close-circle-outline', color: '#e74c3c' },
+        { label: 'Done', value: 'realizada', icon: 'check-all', color: '#27ae60' },
     ];
 
     return (
@@ -27,7 +27,7 @@ const AppointmentDetailsScreen = () => {
                 <TouchableOpacity onPress={() => router.back()}>
                     <Ionicons name="arrow-back-circle" size={45} color="#fff" />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Detalles de la Cita</Text>
+                <Text style={styles.headerTitle}>Appointment details</Text>
             </View>
 
             <View style={styles.contentCard}>
@@ -41,11 +41,11 @@ const AppointmentDetailsScreen = () => {
                         />
                         <View style={styles.idTextContainer}>
                             <Text style={styles.idLabel}>
-                                Paciente: <Text style={styles.idValue}>{appointment?.paciente?.nombre || "No disponible"}</Text>
+                                Paciente: <Text style={styles.idValue}>{appointment?.paciente?.nombre || "Not available"}</Text>
                             </Text>
 
                             <Text style={styles.idLabel}>
-                                Email: <Text style={styles.idValue}>{appointment?.paciente?.email || "No disponible"}</Text>
+                                Email: <Text style={styles.idValue}>{appointment?.paciente?.email || "Not available"}</Text>
                             </Text>
 
                             <View style={{ flexDirection: 'row', marginTop: 5 }}>
@@ -62,12 +62,12 @@ const AppointmentDetailsScreen = () => {
                             </View>
 
                             <Text style={styles.idLabel}>
-                                Motivo: <Text style={styles.idValue}>{appointment?.motivo || "Consulta general"}</Text>
+                                Motivo: <Text style={styles.idValue}>{appointment?.motivo || "General appointment"}</Text>
                             </Text>
                         </View>
                     </View>
 
-                    <Text style={styles.sectionTitle}>ESTADO DE LA CITA</Text>
+                    <Text style={styles.sectionTitle}>Appointment status</Text>
                     <View style={styles.statusContainer}>
                         {statusOptions.map((option) => (
                             <TouchableOpacity
@@ -93,20 +93,20 @@ const AppointmentDetailsScreen = () => {
                         ))}
                     </View>
 
-                    <Text style={styles.sectionTitle}>NOTAS MÉDICAS</Text>
+                    <Text style={styles.sectionTitle}>MEDICAL NOTES</Text>
                     <View style={styles.notesBox}>
-                        <Text style={styles.notesLabel}>Diagnóstico y observaciones:</Text>
+                        <Text style={styles.notesLabel}>Diagnosis and observations:</Text>
                         <TextInput
                             style={styles.input}
                             multiline
-                            placeholder="Escribe las notas de la consulta aquí..."
+                            placeholder="Write your consultation notes here..."
                             value={notes}
                             onChangeText={setNotes}
                         />
                     </View>
 
                     <TouchableOpacity style={styles.finishBtn} onPress={handleFinish}>
-                        <Text style={styles.finishBtnText}>FINALIZAR CONSULTA</Text>
+                        <Text style={styles.finishBtnText}>END CONSULTATION</Text>
                     </TouchableOpacity>
                 </ScrollView>
             </View>

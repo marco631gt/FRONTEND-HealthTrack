@@ -11,7 +11,7 @@ const AppointmentDetailScreen = () => {
     const { appointment, loading, handleCancel } = useAppointmentDetail(id);
 
     if (loading) return <View style={styles.loaderContainer}><ActivityIndicator size="large" color="#1a73e8" /></View>;
-    if (!appointment) return <View style={styles.loaderContainer}><Text>Cita no encontrada</Text></View>;
+    if (!appointment) return <View style={styles.loaderContainer}><Text>Appointment not found</Text></View>;
 
     const dateObj = new Date(appointment.fecha);
 
@@ -22,7 +22,7 @@ const AppointmentDetailScreen = () => {
                 <TouchableOpacity onPress={() => router.back()}>
                     <Ionicons name="arrow-back" size={28} color="#fff" />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Detalles de la Cita</Text>
+                <Text style={styles.headerTitle}>Appointment details</Text>
                 <View style={{ width: 28 }} />
             </View>
 
@@ -44,29 +44,29 @@ const AppointmentDetailScreen = () => {
                     <View style={styles.rowInfo}>
                         <View style={styles.detailItem}>
                             <Ionicons name="calendar-outline" size={20} color="#1a73e8" />
-                            <Text style={styles.detailLabel}>Fecha</Text>
+                            <Text style={styles.detailLabel}>Date</Text>
                             <Text style={styles.detailValue}>{dateObj.toLocaleDateString()}</Text>
                         </View>
                         <View style={styles.detailItem}>
                             <Ionicons name="time-outline" size={20} color="#1a73e8" />
-                            <Text style={styles.detailLabel}>Hora</Text>
+                            <Text style={styles.detailLabel}>Hour</Text>
                             <Text style={styles.detailValue}>{dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
                         </View>
                     </View>
 
                     {/* Motivo (Lo que el paciente escribió) */}
-                    <Text style={styles.sectionTitle}>Motivo de la consulta</Text>
+                    <Text style={styles.sectionTitle}>Reason for the consultation</Text>
                     <View style={styles.reasonBox}>
                         <Text style={styles.reasonText}>{appointment.motivo}</Text>
-                        <Text style={{ fontSize: 10, color: '#999', marginTop: 5 }}>Prioridad: {appointment.prioridad}</Text>
+                        <Text style={{ fontSize: 10, color: '#999', marginTop: 5 }}>Priority: {appointment.prioridad}</Text>
                     </View>
 
                     {/* Notas Médicas (Si existen) */}
-                    <Text style={[styles.sectionTitle, { color: '#2e7d32' }]}>Notas del Médico</Text>
+                    <Text style={[styles.sectionTitle, { color: '#2e7d32' }]}>Doctor's Notes</Text>
                     <View style={[styles.reasonBox, styles.doctorNoteBox]}>
                         <Text style={styles.doctorNoteText}>
                             {/* Tu backend dice que el paciente NO ve notasMedicas, pero lo ponemos por si acaso el rol cambia */}
-                            {appointment.notasMedicas || "Las notas estarán disponibles cuando el médico realice la consulta."}
+                            {appointment.notasMedicas || "The notes will be available when the doctor conducts the consultation."}
                         </Text>
                     </View>
 
@@ -74,7 +74,7 @@ const AppointmentDetailScreen = () => {
                     {appointment.estado === 'pendiente' && (
                         <View style={styles.actionContainer}>
                             <TouchableOpacity style={styles.btnCancel} onPress={handleCancel}>
-                                <Text style={styles.btnTextRed}>Cancelar Cita</Text>
+                                <Text style={styles.btnTextRed}>Cancel appointment</Text>
                             </TouchableOpacity>
                         </View>
                     )}

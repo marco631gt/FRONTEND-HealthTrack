@@ -52,7 +52,7 @@ const LoginScreen = () => {
                             />
 
                             <View style={styles.titleContainer}>
-                                <Text style={styles.title}>Login In</Text>
+                                <Text style={styles.title}>Log In</Text>
                             </View>
 
                             <View style={styles.formContainer}>

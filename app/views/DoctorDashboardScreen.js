@@ -19,12 +19,12 @@ const DoctorDashboardScreen = () => {
                 <View style={styles.appointmentInfoContainer}>
                     <View style={styles.cardHeader}>
                         <Ionicons name="time-outline" size={22} color="#555" />
-                        <Text style={styles.cardLabel}>HORA:</Text>
+                        <Text style={styles.cardLabel}>HOUR:</Text>
                         <Text style={styles.cardValue}>{timeStr}</Text>
                     </View>
                     <View style={styles.cardContent}>
                         <Ionicons name="person-circle-outline" size={22} color="#555" />
-                        <Text style={styles.cardLabel}>PACIENTE:</Text>
+                        <Text style={styles.cardLabel}>PATIENT:</Text>
                         {/* Accedemos a la propiedad según el JSON del backend */}
                         <Text style={styles.cardValue}>{item.paciente?.nombre || "N/A"}</Text>
                     </View>
@@ -44,7 +44,7 @@ const DoctorDashboardScreen = () => {
     };
 
     if (isLoading) {
-        return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text>Cargando Agenda...</Text></View>;
+        return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text>Loading Schedule...</Text></View>;
     }
 
     return (

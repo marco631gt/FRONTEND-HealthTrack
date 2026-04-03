@@ -22,11 +22,11 @@ export const useAppointmentDetail = (appointmentId) => {
             if (selectedAppt) {
                 setAppointment(selectedAppt);
             } else {
-                console.error("Cita no encontrada en la lista");
+                console.error("Appointment not found in the list");
             }
         } catch (error) {
             console.error("Error fetching detail:", error);
-            Alert.alert("Error", "No se pudo cargar la información");
+            Alert.alert("Error", "The information could not be loaded");
         } finally {
             setLoading(false);
         }
@@ -38,12 +38,12 @@ export const useAppointmentDetail = (appointmentId) => {
 
     const handleCancel = () => {
         Alert.alert(
-            "Cancelar Cita",
-            "¿Estás seguro de que deseas cancelar esta cita?",
+            "Cancel appointment",
+            "Are you sure you want to cancel this appointment?",
             [
                 { text: "No", style: "cancel" },
                 {
-                    text: "Sí, Cancelar",
+                    text: "Yes, Cancel",
                     style: "destructive",
                     onPress: async () => {
                         try {
@@ -53,10 +53,10 @@ export const useAppointmentDetail = (appointmentId) => {
                                 citaId: appointmentId,
                                 estado: "cancelada" // Los pacientes solo pueden cancelar
                             });
-                            Alert.alert("Éxito", "Cita cancelada");
+                            Alert.alert("Successfull", "Cancel appointment");
                             router.back();
                         } catch (error) {
-                            Alert.alert("Error", "No tienes permiso o la cita no se pudo cancelar");
+                            Alert.alert("Error", "You don't have permission, or the appointment could not be canceled");
                         } finally {
                             setLoading(false);
                         }
