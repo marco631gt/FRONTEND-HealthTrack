@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Image 
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useAppointmentDetails } from "../hooks/useAppointmentDetails";
-import { useRouter, useLocalSearchParams } from "expo-router"; // Importar useLocalSearchParams
+import { useRouter, useLocalSearchParams } from "expo-router";
 
 const AppointmentDetailsScreen = () => {
     const router = useRouter();
@@ -33,25 +33,37 @@ const AppointmentDetailsScreen = () => {
             <View style={styles.contentCard}>
                 <ScrollView showsVerticalScrollIndicator={false}>
 
+                    {/* TARJETA DE IDENTIFICACIÓN DEL PACIENTE */}
                     <View style={styles.idCard}>
                         <RNImage
                             source={require('../assets/images/doctor-profile.png')}
                             style={styles.patientImg}
                         />
                         <View style={styles.idTextContainer}>
-                            <Text style={styles.idLabel}>Paciente: <Text style={styles.idValue}>{appointment?.paciente?.nombre || 'N/A'}</Text></Text>
-                            <Text style={styles.idLabel}>Email: <Text style={styles.idValue}>{appointment?.paciente?.email || 'N/A'}</Text></Text>
+                            <Text style={styles.idLabel}>
+                                Paciente: <Text style={styles.idValue}>{appointment?.paciente?.nombre || "No disponible"}</Text>
+                            </Text>
+
+                            <Text style={styles.idLabel}>
+                                Email: <Text style={styles.idValue}>{appointment?.paciente?.email || "No disponible"}</Text>
+                            </Text>
 
                             <View style={{ flexDirection: 'row', marginTop: 5 }}>
                                 <View style={{ flex: 1 }}>
-                                    <Text style={styles.idLabel}>Sangre: <Text style={styles.idValue}>{appointment?.paciente?.sangre || '--'}</Text></Text>
+                                    <Text style={styles.idLabel}>
+                                        Sangre: <Text style={styles.idValue}>{appointment?.paciente?.tipoSangre || "--"}</Text>
+                                    </Text>
                                 </View>
                                 <View style={{ flex: 1 }}>
-                                    <Text style={styles.idLabel}>Edad: <Text style={styles.idValue}>{appointment?.paciente?.edad || '--'}</Text></Text>
+                                    <Text style={styles.idLabel}>
+                                        Edad: <Text style={styles.idValue}>{appointment?.paciente?.edad || "--"}</Text>
+                                    </Text>
                                 </View>
                             </View>
 
-                            <Text style={styles.idLabel}>Motivo: <Text style={styles.idValue}>{appointment?.motivo || 'Consulta General'}</Text></Text>
+                            <Text style={styles.idLabel}>
+                                Motivo: <Text style={styles.idValue}>{appointment?.motivo || "Consulta general"}</Text>
+                            </Text>
                         </View>
                     </View>
 

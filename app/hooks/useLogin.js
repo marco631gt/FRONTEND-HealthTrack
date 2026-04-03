@@ -40,11 +40,18 @@ export const useLogin = () => {
             if (response.data && response.data.usuario) {
 
                 // Extraemos según tu objeto real de Postman: { id, email, nombre, rol }
-                const { 
-                    email: emailDb, 
-                    id, 
-                    nombre, 
-                    rol } = response.data.usuario;
+                // Agregamos valores por defecto para que no truene si el campo no existe
+                const {
+                    email: emailDb,
+                    id,
+                    nombre,
+                    rol,
+                    telefono = "",
+                    edad = null,
+                    tipoSangre = "",
+                    alergias = "",
+                    condicionesCronicas = ""
+                } = response.data.usuario;
                 const tokenServer = response.data.token;
 
                 // 4. Guardado de sesión real
@@ -66,7 +73,12 @@ export const useLogin = () => {
                     id: id,
                     role: mappedRole, // Guardamos "Patient" o "Doctor"
                     name: nombre,
-                    email: emailDb
+                    email: emailDb,
+                    telefono: telefono,
+                    edad: edad,
+                    sangre: tipoSangre,
+                    alergias: alergias,
+                    condiciones: condicionesCronicas
                 });
 
                 await setItem("last_login", new Date().toISOString());

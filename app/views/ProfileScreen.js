@@ -47,7 +47,7 @@ const ProfileScreen = () => {
                     <Text style={styles.label}>Contact Phone</Text>
                     <View style={styles.inputBox}>
                         <Ionicons name="call-outline" size={20} color="#1a73e8" />
-                        <Text style={styles.inputText}>{user?.phoneNumber || 'No phone set'}</Text>
+                        <Text style={styles.inputText}>{user?.telefono || 'No phone set'}</Text>
                     </View>
 
                     <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
