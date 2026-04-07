@@ -13,17 +13,9 @@ export const useDoctorDashboard = () => {
             setIsLoading(true);
             const userProfile = await getItem('user_profile');
 
-            // --- DEBUG: Abre tu terminal de Node/Metro y mira qué sale aquí ---
-            console.log("STORAGE PROFILE:", userProfile);
-
             if (userProfile) {
-                // 1. Intentamos convertirlo a objeto por si viene como texto
                 let data = typeof userProfile === 'string' ? JSON.parse(userProfile) : userProfile;
-
-                // 2. Buscamos el nombre en todas las ubicaciones posibles
-                // Algunos backends devuelven 'nombre', otros 'name', otros 'user.nombre'
                 const name = data.nombre || data.user?.nombre || data.name || "Doctor";
-
                 setDoctorName(`Dr. ${name}`);
             }
 
@@ -36,7 +28,6 @@ export const useDoctorDashboard = () => {
         }
     };
 
-    // Lógica para cambiar de día
     const changeDate = (days) => {
         const newDate = new Date(selectedDate);
         newDate.setDate(selectedDate.getDate() + days);
@@ -61,6 +52,7 @@ export const useDoctorDashboard = () => {
         totalPatients: filteredSchedule.length,
         schedule: filteredSchedule,
         selectedDate,
+        setSelectedDate, // <--- Nueva: para el DatePicker
         changeDate,
         isLoading,
         refresh: loadDashboardData

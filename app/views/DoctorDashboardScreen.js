@@ -1,13 +1,32 @@
-import React from "react";
+import React, { useState } from "react"; // Añadido useState
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Platform, Image as RNImage } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { Stack } from 'expo-router';
 import { useDoctorDashboard } from '../hooks/useDoctorDashboard';
 import { useRouter } from 'expo-router';
+import DateTimePicker from '@react-native-community/datetimepicker'; // <--- Importar
 
 const DoctorDashboardScreen = () => {
-    const { doctorName, totalPatients, schedule, selectedDate, changeDate, isLoading } = useDoctorDashboard(); const router = useRouter();
+    const { 
+        doctorName, 
+        totalPatients, 
+        schedule, 
+        selectedDate, 
+        setSelectedDate, // Usar del hook
+        changeDate, 
+        isLoading 
+    } = useDoctorDashboard();
+    
+    const router = useRouter();
+    const [showDatePicker, setShowDatePicker] = useState(false); // Estado para el modal
+
+    const onDateChange = (event, date) => {
+        setShowDatePicker(false); // Cerrar en Android
+        if (date) {
+            setSelectedDate(date);
+        }
+    };
 
     const renderScheduleCard = (item) => {
         const appointmentDate = new Date(item.fecha);
@@ -50,6 +69,7 @@ const DoctorDashboardScreen = () => {
             <Stack.Screen options={{ headerShown: false }} />
 
             <SafeAreaView style={styles.container}>
+                {/* Header idéntico al tuyo... */}
                 <View style={styles.header}>
                     <View style={styles.topBar}>
                         <TouchableOpacity style={styles.notificationGroup}>
@@ -62,7 +82,7 @@ const DoctorDashboardScreen = () => {
 
                         <TouchableOpacity style={styles.profileCircleWrapper} onPress={() => router.push('/views/ProfileScreen')}>
                             <RNImage
-                                source={require('../assets/images/doctor-profile.png')}
+                                source={require('../assets/images/doctor-profile1.png')}
                                 style={styles.profileAvatar}
                             />
                         </TouchableOpacity>
@@ -112,21 +132,31 @@ const DoctorDashboardScreen = () => {
                                 <Ionicons name="chevron-back" size={24} color="#1a73e8" />
                             </TouchableOpacity>
 
-                            <View style={styles.dateInfo}>
+                            {/* AHORA ES CLICKEABLE */}
+                            <TouchableOpacity 
+                                style={styles.dateInfo} 
+                                onPress={() => setShowDatePicker(true)}
+                            >
                                 <Ionicons name="calendar" size={18} color="#1a73e8" />
                                 <Text style={styles.dateText}>
-                                    {selectedDate.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
+                                    {selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
                                 </Text>
-                            </View>
+                            </TouchableOpacity>
 
                             <TouchableOpacity onPress={() => changeDate(1)}>
                                 <Ionicons name="chevron-forward" size={24} color="#1a73e8" />
                             </TouchableOpacity>
                         </View>
 
-                        <Text style={styles.sectionTitle}>SCHEDULE FOR THIS DAY</Text>
-                        {/* ... resto del mapeo de schedule */}
-
+                        {/* EL CALENDARIO MODAL */}
+                        {showDatePicker && (
+                            <DateTimePicker
+                                value={selectedDate}
+                                mode="date"
+                                display={Platform.OS === 'ios' ? 'inline' : 'default'}
+                                onChange={onDateChange}
+                            />
+                        )}
 
                         <Text style={styles.sectionTitle}>TODAY'S SCHEDULE</Text>
 
@@ -145,6 +175,8 @@ const DoctorDashboardScreen = () => {
         </View>
     );
 };
+
+// ... Tus estilos se mantienen igual ...
 
 const styles = StyleSheet.create({
     container: { flex: 1 },

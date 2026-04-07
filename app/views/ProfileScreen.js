@@ -24,7 +24,7 @@ const ProfileScreen = () => {
                 <View style={styles.avatarContainer}>
                     <View style={styles.avatarWrapper}>
                         <RNImage
-                            source={require('../assets/images/doctor-profile.png')}
+                            source={require('../assets/images/doctor-profile1.png')}
                             style={styles.avatarImg}
                         />
                     </View>

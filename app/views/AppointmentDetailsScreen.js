@@ -41,7 +41,7 @@ const AppointmentDetailsScreen = () => {
                         />
                         <View style={styles.idTextContainer}>
                             <Text style={styles.idLabel}>
-                                Paciente: <Text style={styles.idValue}>{appointment?.paciente?.nombre || "Not available"}</Text>
+                                Patient: <Text style={styles.idValue}>{appointment?.paciente?.nombre || "Not available"}</Text>
                             </Text>
 
                             <Text style={styles.idLabel}>
@@ -51,18 +51,18 @@ const AppointmentDetailsScreen = () => {
                             <View style={{ flexDirection: 'row', marginTop: 5 }}>
                                 <View style={{ flex: 1 }}>
                                     <Text style={styles.idLabel}>
-                                        Sangre: <Text style={styles.idValue}>{appointment?.paciente?.tipoSangre || "--"}</Text>
+                                        Blood Type: <Text style={styles.idValue}>{appointment?.paciente?.tipoSangre || "--"}</Text>
                                     </Text>
                                 </View>
                                 <View style={{ flex: 1 }}>
                                     <Text style={styles.idLabel}>
-                                        Edad: <Text style={styles.idValue}>{appointment?.paciente?.edad || "--"}</Text>
+                                        Age: <Text style={styles.idValue}>{appointment?.paciente?.edad || "--"}</Text>
                                     </Text>
                                 </View>
                             </View>
 
                             <Text style={styles.idLabel}>
-                                Motivo: <Text style={styles.idValue}>{appointment?.motivo || "General appointment"}</Text>
+                                Reason: <Text style={styles.idValue}>{appointment?.motivo || "General appointment"}</Text>
                             </Text>
                         </View>
                     </View>
