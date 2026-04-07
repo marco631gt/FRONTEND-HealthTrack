@@ -7,13 +7,12 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 
 const AppointmentDetailsScreen = () => {
     const router = useRouter();
-    // Extraemos el ID que viene en la ruta (ej: /details?id=123)
     const { id } = useLocalSearchParams();
 
     // Pasamos ese id al hook
     const { appointment, notes, setNotes, status, setStatus, isLoading, handleFinish } = useAppointmentDetails(id);
 
-    if (isLoading) return <View style={styles.center}><Text>Cargando datos del paciente...</Text></View>;
+    if (isLoading) return <View style={styles.center}><Text>Loading patient data...</Text></View>;
 
     const statusOptions = [
         { label: 'Pending', value: 'pendiente', icon: 'clock-outline', color: '#f39c12' },
@@ -27,7 +26,7 @@ const AppointmentDetailsScreen = () => {
                 <TouchableOpacity onPress={() => router.back()}>
                     <Ionicons name="arrow-back-circle" size={45} color="#fff" />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Appointment details</Text>
+                <Text style={styles.headerTitle}>Appointment Details</Text>
             </View>
 
             <View style={styles.contentCard}>
@@ -36,7 +35,7 @@ const AppointmentDetailsScreen = () => {
                     {/* TARJETA DE IDENTIFICACIÓN DEL PACIENTE */}
                     <View style={styles.idCard}>
                         <RNImage
-                            source={require('../assets/images/doctor-profile.png')}
+                            source={require('../assets/images/patient-icon.png')}
                             style={styles.patientImg}
                         />
                         <View style={styles.idTextContainer}>
@@ -106,7 +105,7 @@ const AppointmentDetailsScreen = () => {
                     </View>
 
                     <TouchableOpacity style={styles.finishBtn} onPress={handleFinish}>
-                        <Text style={styles.finishBtnText}>END CONSULTATION</Text>
+                        <Text style={styles.finishBtnText}>FINISH CONSULTATION</Text>
                     </TouchableOpacity>
                 </ScrollView>
             </View>

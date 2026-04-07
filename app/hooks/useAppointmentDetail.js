@@ -51,7 +51,7 @@ export const useAppointmentDetail = (appointmentId) => {
                                 citaId: appointmentId,
                                 estado: "cancelada"
                             });
-                            Alert.alert("Successfull", "Cancel appointment");
+                            Alert.alert("Successfull", "Appointment Cancelled");
                             router.back();
                         } catch (error) {
                             Alert.alert("Error", "You don't have permission, or the appointment could not be canceled");

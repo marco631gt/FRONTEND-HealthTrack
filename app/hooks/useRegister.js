@@ -87,12 +87,11 @@ export const useRegister = () => {
                 router.replace('/views/LoginScreen'); 
             };
 
-            // 5. Manejo de éxito
             if (response.data) {
                 Alert.alert(
                     '¡Succesfully!',
                     `User ${name} correctly registered as ${role}.`,
-                    [{ text: 'Ir al Login', onPress: onConfirmSuccess }]
+                    [{ text: 'Go to Login', onPress: onConfirmSuccess }]
                 );
             }
 

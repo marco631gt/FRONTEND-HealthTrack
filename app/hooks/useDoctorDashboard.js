@@ -52,7 +52,7 @@ export const useDoctorDashboard = () => {
         totalPatients: filteredSchedule.length,
         schedule: filteredSchedule,
         selectedDate,
-        setSelectedDate, // <--- Nueva: para el DatePicker
+        setSelectedDate, 
         changeDate,
         isLoading,
         refresh: loadDashboardData

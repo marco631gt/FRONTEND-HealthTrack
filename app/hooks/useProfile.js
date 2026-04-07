@@ -38,7 +38,7 @@ export const useProfile = () => {
             [
                 {
                     text: "Cancel",
-                    onPress: () => console.log("Cancelado"),
+                    onPress: () => console.log("Cancelled"),
                     style: "cancel"
                 },
                 { 

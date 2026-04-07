@@ -13,16 +13,16 @@ const DoctorDashboardScreen = () => {
         totalPatients, 
         schedule, 
         selectedDate, 
-        setSelectedDate, // Usar del hook
+        setSelectedDate,
         changeDate, 
         isLoading 
     } = useDoctorDashboard();
     
     const router = useRouter();
-    const [showDatePicker, setShowDatePicker] = useState(false); // Estado para el modal
+    const [showDatePicker, setShowDatePicker] = useState(false);
 
     const onDateChange = (event, date) => {
-        setShowDatePicker(false); // Cerrar en Android
+        setShowDatePicker(false); 
         if (date) {
             setSelectedDate(date);
         }
@@ -166,9 +166,6 @@ const DoctorDashboardScreen = () => {
                             <Text style={styles.noAppointments}>No appointments scheduled.</Text>
                         )}
 
-                        <TouchableOpacity style={styles.viewAllButton}>
-                            <Text style={styles.viewAllButtonText}>VIEW ALL APPOINTMENTS</Text>
-                        </TouchableOpacity>
                     </ScrollView>
                 </View>
             </SafeAreaView>
@@ -176,7 +173,6 @@ const DoctorDashboardScreen = () => {
     );
 };
 
-// ... Tus estilos se mantienen igual ...
 
 const styles = StyleSheet.create({
     container: { flex: 1 },
@@ -291,14 +287,6 @@ const styles = StyleSheet.create({
     cardLabel: { fontSize: 14, fontWeight: 'bold', color: '#555', marginLeft: 8 },
     cardValue: { fontSize: 14, color: '#333', marginLeft: 5 },
     detailsButton: { marginLeft: 10 },
-    viewAllButton: {
-        backgroundColor: '#1a73e8',
-        paddingVertical: 15,
-        borderRadius: 12,
-        alignItems: 'center',
-        marginTop: 10,
-    },
-    viewAllButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
     dateFilterContainer: {
         flexDirection: 'row',
         backgroundColor: '#fff',

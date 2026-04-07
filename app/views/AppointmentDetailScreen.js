@@ -30,7 +30,7 @@ const AppointmentDetailScreen = () => {
                 <TouchableOpacity onPress={() => router.back()}>
                     <Ionicons name="arrow-back" size={28} color="#fff" />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Appointment details</Text>
+                <Text style={styles.headerTitle}>Appointment Details</Text>
                 <View style={{ width: 28 }} />
             </View>
 
@@ -84,7 +84,7 @@ const AppointmentDetailScreen = () => {
                     {appointment.estado === 'pendiente' && (
                         <View style={styles.actionContainer}>
                             <TouchableOpacity style={styles.btnCancel} onPress={handleCancel}>
-                                <Text style={styles.btnTextRed}>Cancel appointment</Text>
+                                <Text style={styles.btnTextRed}>Cancel Appointment</Text>
                             </TouchableOpacity>
                         </View>
                     )}

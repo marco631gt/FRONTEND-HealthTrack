@@ -17,7 +17,6 @@ api.interceptors.request.use(
         try {
             const token = await getToken('token');
 
-            //solo si el token existe, lo agregamos a los headers
             if (token !== null) {
                 config.headers.Authorization = `Bearer ${token}`;
             }
