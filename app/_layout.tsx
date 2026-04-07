@@ -10,7 +10,6 @@ export default function RootLayout() {
     return <SplashScreen onFinish={() => setIsLoading(false)} />;
   }
 
-  // Usamos Stack para que la navegación "exista"
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" /> 

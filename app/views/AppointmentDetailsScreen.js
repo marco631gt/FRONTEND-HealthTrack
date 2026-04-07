@@ -1,26 +1,27 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Image as RNImage } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-// IMPORTANTE: Asegúrate de tener estas dos importaciones
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons"; 
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useAppointmentDetails } from "../hooks/useAppointmentDetails";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 
-const AppointmentDetailsScreen = ({ appointmentId }) => {
+const AppointmentDetailsScreen = () => {
     const router = useRouter();
-    const { patientData, notes, setNotes, status, setStatus, isLoading, handleFinish } = useAppointmentDetails(appointmentId);
+    const { id } = useLocalSearchParams();
 
-    if (isLoading) return <View style={styles.center}><Text>Loading...</Text></View>;
+    // Pasamos ese id al hook
+    const { appointment, notes, setNotes, status, setStatus, isLoading, handleFinish } = useAppointmentDetails(id);
+
+    if (isLoading) return <View style={styles.center}><Text>Loading patient data...</Text></View>;
 
     const statusOptions = [
-        { label: 'In Progress', value: 'In Progress', icon: 'clock-outline', color: '#f39c12' },
-        { label: 'Canceled', value: 'Canceled', icon: 'close-circle-outline', color: '#e74c3c' },
-        { label: 'Completed', value: 'Completed', icon: 'check-all', color: '#27ae60' },
+        { label: 'Pending', value: 'pendiente', icon: 'clock-outline', color: '#f39c12' },
+        { label: 'Cancel', value: 'cancelada', icon: 'close-circle-outline', color: '#e74c3c' },
+        { label: 'Done', value: 'realizada', icon: 'check-all', color: '#27ae60' },
     ];
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* Header */}
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()}>
                     <Ionicons name="arrow-back-circle" size={45} color="#fff" />
@@ -30,25 +31,42 @@ const AppointmentDetailsScreen = ({ appointmentId }) => {
 
             <View style={styles.contentCard}>
                 <ScrollView showsVerticalScrollIndicator={false}>
-                    {/* Tarjeta de Identificación */}
+
+                    {/* TARJETA DE IDENTIFICACIÓN DEL PACIENTE */}
                     <View style={styles.idCard}>
-                        <RNImage 
-                            source={require('../assets/images/doctor-profile.png')} 
-                            style={styles.patientImg} 
+                        <RNImage
+                            source={require('../assets/images/patient-icon.png')}
+                            style={styles.patientImg}
                         />
                         <View style={styles.idTextContainer}>
-                            <Text style={styles.idLabel}>Patient: <Text style={styles.idValue}>{patientData.name}</Text></Text>
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                <Text style={styles.idLabel}>Id: <Text style={styles.idValue}>{patientData.id}</Text></Text>
-                                <Text style={styles.idLabel}>Age: <Text style={styles.idValue}>{patientData.age}</Text></Text>
+                            <Text style={styles.idLabel}>
+                                Patient: <Text style={styles.idValue}>{appointment?.paciente?.nombre || "Not available"}</Text>
+                            </Text>
+
+                            <Text style={styles.idLabel}>
+                                Email: <Text style={styles.idValue}>{appointment?.paciente?.email || "Not available"}</Text>
+                            </Text>
+
+                            <View style={{ flexDirection: 'row', marginTop: 5 }}>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={styles.idLabel}>
+                                        Blood Type: <Text style={styles.idValue}>{appointment?.paciente?.tipoSangre || "--"}</Text>
+                                    </Text>
+                                </View>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={styles.idLabel}>
+                                        Age: <Text style={styles.idValue}>{appointment?.paciente?.edad || "--"}</Text>
+                                    </Text>
+                                </View>
                             </View>
-                            <Text style={styles.idLabel}>Blood: <Text style={styles.idValue}>{patientData.blood}</Text></Text>
-                            <Text style={styles.idLabel}>Allergies: <Text style={styles.idValue}>{patientData.allergies}</Text></Text>
+
+                            <Text style={styles.idLabel}>
+                                Reason: <Text style={styles.idValue}>{appointment?.motivo || "General appointment"}</Text>
+                            </Text>
                         </View>
                     </View>
 
-                    {/* --- BARRA DE ESTATUS --- */}
-                    <Text style={styles.sectionTitle}>APPOINTMENT STATUS</Text>
+                    <Text style={styles.sectionTitle}>Appointment status</Text>
                     <View style={styles.statusContainer}>
                         {statusOptions.map((option) => (
                             <TouchableOpacity
@@ -59,10 +77,10 @@ const AppointmentDetailsScreen = ({ appointmentId }) => {
                                 ]}
                                 onPress={() => setStatus(option.value)}
                             >
-                                <MaterialCommunityIcons 
-                                    name={option.icon} 
-                                    size={20} 
-                                    color={status === option.value ? "#fff" : "#666"} 
+                                <MaterialCommunityIcons
+                                    name={option.icon}
+                                    size={20}
+                                    color={status === option.value ? "#fff" : "#666"}
                                 />
                                 <Text style={[
                                     styles.statusText,
@@ -74,14 +92,13 @@ const AppointmentDetailsScreen = ({ appointmentId }) => {
                         ))}
                     </View>
 
-                    {/* Notas de Consulta */}
-                    <Text style={styles.sectionTitle}>CONSULTATION NOTES</Text>
+                    <Text style={styles.sectionTitle}>MEDICAL NOTES</Text>
                     <View style={styles.notesBox}>
-                        <Text style={styles.notesLabel}>Reason:</Text>
+                        <Text style={styles.notesLabel}>Diagnosis and observations:</Text>
                         <TextInput
                             style={styles.input}
                             multiline
-                            placeholder="Type notes here..."
+                            placeholder="Write your consultation notes here..."
                             value={notes}
                             onChangeText={setNotes}
                         />
@@ -107,13 +124,12 @@ const styles = StyleSheet.create({
     idLabel: { color: 'rgba(255,255,255,0.7)', fontSize: 12, fontWeight: 'bold', marginBottom: 2 },
     idValue: { color: '#fff', fontSize: 15 },
     sectionTitle: { fontSize: 18, fontWeight: 'bold', color: '#1a4f8d', marginTop: 25, marginBottom: 15 },
-    
-    // ESTILOS NUEVOS PARA LA BARRA DE ESTATUS
-    statusContainer: { 
-        flexDirection: 'row', 
-        justifyContent: 'space-between', 
-        backgroundColor: '#fff', 
-        borderRadius: 15, 
+
+    statusContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        backgroundColor: '#fff',
+        borderRadius: 15,
         padding: 5,
         elevation: 3,
         shadowColor: '#000',

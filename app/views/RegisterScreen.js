@@ -12,7 +12,7 @@ const RegisterScreen = () => {
         email, setEmail,
         password, setPassword,
         role, setRole,
-        phoneNumber,setPhoneNumber,
+        phoneNumber, setPhoneNumber,
         age, setAge,
         sex, setSex,
         bloodType, setBloodType,
@@ -34,7 +34,6 @@ const RegisterScreen = () => {
                 </View>
 
                 <View style={styles.card}>
-                    {/* --- CAMPOS COMUNES --- */}
                     <Text style={styles.label}>Name</Text>
                     <TextInput
                         style={styles.input}
@@ -59,7 +58,7 @@ const RegisterScreen = () => {
                         placeholder="Enter your password"
                         value={password}
                         onChangeText={setPassword}
-                        secureTextEntry
+                        secureTextEntry={true}
                     />
 
                     <Text style={styles.label}>Role</Text>
@@ -77,15 +76,14 @@ const RegisterScreen = () => {
                     </View>
 
                     <Text style={styles.label}>Phone Number</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Enter your phone number"
-                                value={phoneNumber}
-                                onChangeText={setPhoneNumber}
-                                keyboardType="numeric"
-                            />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter your phone number"
+                        value={phoneNumber}
+                        onChangeText={setPhoneNumber}
+                        keyboardType="numeric"
+                    />
 
-                    {/* --- CAMPOS CONDICIONALES PARA PACIENTE --- */}
                     {role === 'Patient' && (
                         <View>
                             <Text style={styles.label}>Age</Text>
@@ -148,7 +146,7 @@ const RegisterScreen = () => {
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.footer} onPress={() => router.back()}>
-                        <Text style={styles.footerText}>Already have an account? <Text style={styles.bold}>Login In</Text></Text>
+                        <Text style={styles.footerText}>Already have an account? <Text style={styles.bold}>Log In</Text></Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>

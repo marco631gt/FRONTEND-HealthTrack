@@ -1,63 +1,102 @@
 import { useState } from "react";
 import { Alert } from "react-native";
 import { validate } from "../helpers/validators";
+import api from '../models/auth';
 import { saveToken, setItem } from "../services/storageService";
+import { useRouter } from "expo-router";
 
 export const useLogin = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
     const handleLogin = async () => {
-        // 1. Validaciones
+        // 1. Validaciones iniciales
         if (email.trim() === '' || password.trim() === '') {
-            Alert.alert('Error', 'All the fields required');
+            Alert.alert('Error', 'All the fields are required');
             return;
         }
 
         if (!validate("email", email)) {
-            Alert.alert("Error", "Email inválido");
-            return;
-        }
-
-        // 2. MOCK LOGIN (Datos de prueba)
-        // Agregamos el rol al mockUser para que el sistema sepa a dónde ir
-        const mockUser = {
-            email: "test@test.com",
-            password: "123456",
-            name: "Usuario de Prueba",
-            role: "Patient" // <--- CAMBIA ESTO A "Doctor" para probar la otra pantalla
-        };
-
-        if (email !== mockUser.email || password !== mockUser.password) {
-            Alert.alert("Error", "Credenciales incorrectas");
+            Alert.alert("Error", "Email not valid");
             return;
         }
 
         try {
-            // 3. Guardar sesión y PERFIL
-            const fakeToken = "TOKEN-FAKE-123";
-            await saveToken(fakeToken);
-            
-            // IMPORTANTE: Guardamos el perfil con el ROL para el index.tsx
-            await setItem('user_profile', { 
-                role: mockUser.role, 
-                name: mockUser.name,
-                email: mockUser.email 
-            });
-            
-            await setItem("last_login", new Date().toISOString());
+            setLoading(true);
+            // 2. Intento de Login con la API
+            const data = {
+                email: email.toLowerCase().trim(),
+                password: password,
+            };
 
-            Alert.alert("Success", `Welcome ${mockUser.name}`, [
-                { text: "OK" }
-            ]);
+            const response = await api.post('auth/login', data);
+            console.log('DATOS RECIBIDOS:', response.data);
+            console.log('Status Code:', response.status);
 
-            // Limpiar
-            setEmail("");
-            setPassword("");
+            if (response.data && response.data.usuario) {
+
+                const {
+                    email: emailDb,
+                    id,
+                    nombre,
+                    rol,
+                    telefono = "",
+                    edad = null,
+                    tipoSangre = "",
+                    alergias = "",
+                    condicionesCronicas = ""
+                } = response.data.usuario;
+                const tokenServer = response.data.token;
+
+                await saveToken(tokenServer);
+
+                let mappedRole = "";
+                if (rol === "paciente") {
+                    mappedRole = "Patient";
+                } else if (rol === "medico") {
+                    mappedRole = "Doctor";
+                } else {
+                    mappedRole = rol; 
+                }
+
+                await setItem('user_profile', {
+                    id: id,
+                    role: mappedRole, 
+                    name: nombre,
+                    email: emailDb,
+                    telefono: telefono,
+                    edad: edad,
+                    sangre: tipoSangre,
+                    alergias: alergias,
+                    condiciones: condicionesCronicas
+                });
+
+                await setItem("last_login", new Date().toISOString());
+
+                Alert.alert("Welcome", `Hi, ${nombre}`, [
+                    {
+                        text: "OK",
+                        onPress: () => router.replace("/") 
+                    }
+                ]);
+
+                setEmail("");
+                setPassword("");
+
+            } else {
+                Alert.alert("Error", "The user's information could not be retrieved");
+            }
 
         } catch (error) {
-            console.error("Error saving session:", error);
-            Alert.alert("Error", "Could not save session data");
+            console.error("Login Error:", error);
+
+            const message = error.response?.data?.msg || "Incorrect credentials or connection problem";
+            Alert.alert("Login error", message);
+
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -67,6 +106,7 @@ export const useLogin = () => {
         password,
         setPassword,
         handleLogin,
+        loading,
     };
 };
 

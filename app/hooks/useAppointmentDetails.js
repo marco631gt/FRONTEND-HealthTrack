@@ -1,39 +1,61 @@
 import { useState, useEffect } from "react";
+import { Alert } from "react-native";
+import api from "../models/auth";
+import { useRouter } from "expo-router";
 
 export const useAppointmentDetails = (appointmentId) => {
-    const [patientData, setPatientData] = useState(null);
+    const [appointment, setAppointment] = useState(null);
     const [notes, setNotes] = useState("");
     const [isLoading, setIsLoading] = useState(true);
-    const [status, setStatus] = useState("In Progress");
+    const [status, setStatus] = useState("pendiente");
+    const router = useRouter();
 
     useEffect(() => {
         const loadData = async () => {
-            setIsLoading(true);
-            // Simulamos una carga de datos
-            await new Promise(resolve => setTimeout(resolve, 800));
+            if (!appointmentId) return;
+            try {
+                setIsLoading(true);
+                const response = await api.get("citas/mis-citas");
+                const found = response.data.find(a => a._id === appointmentId);
 
-            // Datos de prueba (Mocks)
-            const mockData = {
-                "1": { name: "María González", id: "MG12345", age: 34, blood: "A+", allergies: "Penicillin" },
-                "2": { name: "Carlos Rodríguez", id: "CR98765", age: 45, blood: "O+", allergies: "None" },
-                "3": { name: "Ana Hernández", id: "AH55555", age: 29, blood: "B-", allergies: "Lactose" },
-            };
-
-            setPatientData(mockData[appointmentId] || mockData["1"]);
-            setIsLoading(false);
+                if (found) {
+                    setAppointment(found);
+                    setNotes(found.notasMedicas || "");
+                    setStatus(found.estado || "pendiente");
+                }
+            } catch (error) {
+                Alert.alert("Error", "Unable to connect to the server");
+            } finally {
+                setIsLoading(false);
+            }
         };
         loadData();
     }, [appointmentId]);
 
-    const handleFinish = () => {
-        console.log("Consulta finalizada:", {
-            appointmentId,
-            status,
-            notes
-        });
-        // Aquí enviarías status y notes a tu backend
+    const handleFinish = async () => {
+        if (!notes.trim()) {
+            Alert.alert("Notice", "Please add any notes before finalizing");
+            return;
+        }
+
+        try {
+            // 1. Guardar Notas
+            await api.put("citas/notas", {
+                citaId: appointmentId,
+                notasMedicas: notes
+            });
+
+            await api.put("citas/estado", {
+                citaId: appointmentId,
+                estado: status
+            });
+
+            Alert.alert("Success", "Appointment saved successfully");
+            router.back();
+        } catch (error) {
+            Alert.alert("Error", "The changes could not be saved");
+        }
     };
 
-    // Retornamos status y setStatus
-    return { patientData, notes, setNotes, status, setStatus, isLoading, handleFinish };
+    return { appointment, notes, setNotes, status, setStatus, isLoading, handleFinish };
 };

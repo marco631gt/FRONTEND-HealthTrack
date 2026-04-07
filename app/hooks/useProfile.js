@@ -1,4 +1,4 @@
-import { Alert } from "react-native"; // <--- Importamos Alert
+import { Alert } from "react-native";
 import { getItem, removeItem, deleteToken} from "../services/storageService";
 import { useRouter } from "expo-router";
 import { useState, useEffect } from "react";
@@ -17,42 +17,37 @@ export const useProfile = () => {
         loadUserData();
     }, []);
 
-    // Función que ejecuta el borrado y navegación
     const executeLogout = async () => {
     try {
-        // 1. Borramos el perfil del almacenamiento normal
         await removeItem('user_profile'); 
         
-        // 2. Borramos el token del almacenamiento seguro
         await deleteToken(); 
 
-        // 3. Navegamos al login
         setTimeout(() => {
             router.replace('/views/LoginScreen');
         }, 100);
     } catch (error) {
-        console.error("Error al cerrar sesión:", error);
+        console.error("Error Log out:", error);
     }
 };
 
-    // Función que muestra la alerta
     const handleLogout = () => {
         Alert.alert(
-            "Cerrar Sesión", // Título
-            "¿Estás seguro de que deseas salir de tu cuenta?", // Mensaje
+            "Log Out", 
+            "Are you sure you want to log out of your account?",
             [
                 {
-                    text: "Cancelar",
-                    onPress: () => console.log("Cancelado"),
-                    style: "cancel" // En iOS esto lo pone en negrita/azul
+                    text: "Cancel",
+                    onPress: () => console.log("Cancelled"),
+                    style: "cancel"
                 },
                 { 
-                    text: "Sí, salir", 
+                    text: "Yes, logout", 
                     onPress: executeLogout,
-                    style: "destructive" // En iOS esto lo pone en rojo
+                    style: "destructive" 
                 }
             ],
-            { cancelable: true } // Permite cerrar la alerta tocando fuera (en Android)
+            { cancelable: true }
         );
     };
 

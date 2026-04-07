@@ -1,44 +1,60 @@
-import { useState, useEffect } from "react";
-// Importamos setItem de tu servicio de almacenamiento para simular la obtención del perfil
-import { getItem } from "../services/storageService"; 
+import { useState, useEffect, useMemo } from "react";
+import { getItem } from "../services/storageService";
+import api from "../models/auth";
 
 export const useDoctorDashboard = () => {
-    // Estado para guardar el nombre del doctor
-    const [doctorName, setDoctorName] = useState("Dr. García"); // Mock Data inicial
-    // Estado para guardar el total de pacientes del día
-    const [totalPatients, setTotalPatients] = useState(0);
-    // Estado para guardar la agenda del día con citas simuladas
-    const [schedule, setSchedule] = useState([]);
+    const [doctorName, setDoctorName] = useState("");
+    const [allAppointments, setAllAppointments] = useState([]);
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [isLoading, setIsLoading] = useState(true);
 
-    // Efecto para cargar los datos cuando se monta el componente
-    useEffect(() => {
-        const loadDashboardData = async () => {
-            // Simulamos la obtención del perfil del doctor desde el almacenamiento local
+    const loadDashboardData = async () => {
+        try {
+            setIsLoading(true);
             const userProfile = await getItem('user_profile');
-            if (userProfile && userProfile.name) {
-                setDoctorName(`Dr. ${userProfile.name}`);
+
+            if (userProfile) {
+                let data = typeof userProfile === 'string' ? JSON.parse(userProfile) : userProfile;
+                const name = data.nombre || data.user?.nombre || data.name || "Doctor";
+                setDoctorName(`Dr. ${name}`);
             }
 
-            // Simulamos la obtención de los datos del día
-            // Más adelante esto será una llamada a tu APIService.
-            setTotalPatients(3); // Mock: 3 pacientes hoy
+            const response = await api.get("citas/mis-citas");
+            setAllAppointments(response.data || []);
+        } catch (error) {
+            console.error("Error loading dashboard:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-            const mockSchedule = [
-                { id: "1", time: "09:00 AM", name: "María González", details: "Consulta de Seguimiento" },
-                { id: "2", time: "10:30 AM", name: "Carlos Rodríguez", details: "Primera Consulta" },
-                { id: "3", time: "02:00 PM", name: "Ana Hernández", details: "Revisión de Resultados" },
-            ];
-            setSchedule(mockSchedule);
-        };
+    const changeDate = (days) => {
+        const newDate = new Date(selectedDate);
+        newDate.setDate(selectedDate.getDate() + days);
+        setSelectedDate(newDate);
+    };
 
-        loadDashboardData();
-    }, []);
+    const filteredSchedule = useMemo(() => {
+        return allAppointments.filter(appt => {
+            const apptDate = new Date(appt.fecha);
+            return (
+                apptDate.getFullYear() === selectedDate.getFullYear() &&
+                apptDate.getMonth() === selectedDate.getMonth() &&
+                apptDate.getDate() === selectedDate.getDate()
+            );
+        });
+    }, [allAppointments, selectedDate]);
+
+    useEffect(() => { loadDashboardData(); }, []);
 
     return {
         doctorName,
-        totalPatients,
-        schedule,
+        totalPatients: filteredSchedule.length,
+        schedule: filteredSchedule,
+        selectedDate,
+        setSelectedDate, 
+        changeDate,
+        isLoading,
+        refresh: loadDashboardData
     };
 };
-
-export default useDoctorDashboard;

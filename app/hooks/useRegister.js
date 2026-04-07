@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { Alert } from "react-native";
 import { validate } from "../helpers/validators";
+import api from '../models/auth';
 import { saveToken, setItem } from "../services/storageService";
-import { useRouter } from 'expo-router'; // 1. Importamos el router
+import { useRouter } from 'expo-router';
 
 export const useRegister = () => {
-    const router = useRouter(); // 2. Inicializamos el router
+    const router = useRouter(); 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('Patient');
+    const [loading, setLoading] = useState(false);
 
     const [age, setAge] = useState('');
     const [sex, setSex] = useState('');
@@ -19,8 +21,7 @@ export const useRegister = () => {
     const [phoneNumber, setPhoneNumber] = useState('');
 
     const handleRegister = async () => {
-
-        // 1. Validaciones base (Para todos)
+        // 1. Validaciones de campos obligatorios
         if (email.trim() === '' || password.trim() === '' || name.trim() === '') {
             Alert.alert('Error', 'All the fields required');
             return;
@@ -31,13 +32,12 @@ export const useRegister = () => {
             return;
         }
 
-        // Validación de 10 números exactamente
         if (!phoneNumber.trim() || isNaN(phoneNumber) || phoneNumber.length !== 10) {
             Alert.alert("Error", "Please enter a valid 10-digit phone number");
             return;
         }
 
-        // 2. Validaciones exclusivas para PACIENTES
+        // Validaciones extra si es Paciente
         if (role === 'Patient') {
             if (!age.trim() || isNaN(age) || parseInt(age) <= 0) {
                 Alert.alert("Error", "Please enter a valid age");
@@ -47,81 +47,60 @@ export const useRegister = () => {
                 Alert.alert("Error", "Blood type is required");
                 return;
             }
-            if (!allergies.trim()) {
-                Alert.alert("Error", "Allergies field is required (write 'None' if applicable)");
-                return;
-            }
-            if (!chronicConditions.trim()) {
-                Alert.alert("Error", "Chronic conditions field is required (write 'None' if applicable)");
-                return;
-            }
         }
 
-        // 3. Creación del objeto de usuario
-        const newUser = {
-            name,
-            email,
-            password,
-            role,
-            phoneNumber,
-            ...(role === 'Patient' && {
-                age: parseInt(age),
-                sex,
-                bloodType: bloodType.toUpperCase(),
-                allergies,
-                chronicConditions,
-            }),
-            createdAt: new Date().toISOString()
-        };
-
         try {
-            const fakeToken = "REGISTER-TOKEN-999";
-            await saveToken(fakeToken);
-            await setItem('user_profile', newUser);
+            setLoading(true);
 
-            // Función para limpiar y navegar
-            const onConfirmSuccess = () => {
-                // Limpiar formulario
-                setName('');
-                setEmail('');
-                setPassword('');
-                setRole('Patient');
-                setPhoneNumber('');
-                setAge('');
-                setSex('');
-                setBloodType('');
-                setAllergies('');
-                setChronicConditions('');
+            // 2. MAPEO PARA EL BACKEND (Enum fix)
+            // Convertimos 'Patient' -> 'paciente' y 'Doctor' -> 'medico'
+            const rolParaBackend = role === 'Patient' ? 'paciente' : 'medico';
 
-                // Navegar al login
-                router.replace('./LoginScreen'); 
+            // 3. Creación del objeto 
+            const registerData = {
+                nombre: name, 
+                email: email.toLowerCase().trim(),
+                password: password,
+                rol: rolParaBackend,
+                // campos extras que agregue cuando pedi el formulario extra:
+                telefono: phoneNumber, 
+                ...(role === 'Patient' && {
+                    edad: parseInt(age),
+                    sexo: sex,
+                    tipoSangre: bloodType.toUpperCase(),
+                    alergias: allergies,
+                    condicionesCronicas: chronicConditions,
+                })
             };
 
-            // --- LÓGICA DE ALERTA DIFERENCIADA CON REDIRECCIÓN ---
-            if (role === 'Patient') {
+            // Petición  a Render
+            const response = await api.post('auth/register', registerData);
+            console.log("Respuesta Registro:", response.data);
+
+            const onConfirmSuccess = () => {
+                // Resetear estados
+                setName(''); setEmail(''); setPassword('');
+                setRole('Patient'); setPhoneNumber(''); setAge('');
+                setSex(''); setBloodType(''); setAllergies('');
+                setChronicConditions('');
+
+                router.replace('/views/LoginScreen'); 
+            };
+
+            if (response.data) {
                 Alert.alert(
-                    '¡Éxito!',
-                    `Usuario ${name} registrado como ${role}\n\n` +
-                    `Información Médica:\n` +
-                    `• Edad: ${age}\n` +
-                    `• Sexo: ${sex}\n` +
-                    `• Sangre: ${bloodType.toUpperCase()}\n` +
-                    `• Alergias: ${allergies}\n` +
-                    `• Condiciones: ${chronicConditions}\n` +
-                    `• Phone Number: ${phoneNumber}`,
-                    [{ text: 'OK', onPress: onConfirmSuccess }] // Botón para redirigir
-                );
-            } else {
-                Alert.alert(
-                    '¡Éxito!', 
-                    `Usuario ${name} registrado como ${role} and your phone number is: ${phoneNumber}`,
-                    [{ text: 'OK', onPress: onConfirmSuccess }] // Botón para redirigir
+                    '¡Succesfully!',
+                    `User ${name} correctly registered as ${role}.`,
+                    [{ text: 'Go to Login', onPress: onConfirmSuccess }]
                 );
             }
 
         } catch (error) {
-            console.error("Error en el registro:", error);
-            Alert.alert("Error", "No se pudieron guardar los datos del registro.");
+            console.error("Register Error:", error.response?.data || error.message);
+            const serverMsg = error.response?.data?.message || "The registration could not be completed.";
+            Alert.alert("Error", serverMsg);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -136,6 +115,7 @@ export const useRegister = () => {
         bloodType, setBloodType,
         allergies, setAllergies,
         chronicConditions, setChronicConditions,
+        loading,
         handleRegister
     };
 };

@@ -1,45 +1,75 @@
-import React from "react";
+import React, { useState } from "react"; // Añadido useState
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Platform, Image as RNImage } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
-import { Stack } from 'expo-router'; // Importamos Stack para configurar el header
+import { Stack } from 'expo-router';
 import { useDoctorDashboard } from '../hooks/useDoctorDashboard';
 import { useRouter } from 'expo-router';
+import DateTimePicker from '@react-native-community/datetimepicker'; // <--- Importar
 
 const DoctorDashboardScreen = () => {
-    const { doctorName, totalPatients, schedule } = useDoctorDashboard();
-
-    const renderScheduleCard = (item) => (
-        <View key={item.id} style={styles.scheduleCard}>
-            <View style={styles.appointmentInfoContainer}>
-                <View style={styles.cardHeader}>
-                    <Ionicons name="time-outline" size={22} color="#555" />
-                    <Text style={styles.cardLabel}>TIME:</Text>
-                    <Text style={styles.cardValue}>{item.time}</Text>
-                </View>
-                <View style={styles.cardContent}>
-                    <Ionicons name="person-circle-outline" size={22} color="#555" />
-                    <Text style={styles.cardLabel}>NAME:</Text>
-                    <Text style={styles.cardValue}>{item.name}</Text>
-                </View>
-            </View>
-            <TouchableOpacity
-                style={styles.detailsButton}
-                onPress={() => router.push(`/doctor/appointment/${item.id}`)} // <- ESTO ES LO NUEVO
-            >
-                <Ionicons name="chevron-down-circle" size={28} color="#007bff" />
-            </TouchableOpacity>
-        </View>
-    );
-
+    const { 
+        doctorName, 
+        totalPatients, 
+        schedule, 
+        selectedDate, 
+        setSelectedDate,
+        changeDate, 
+        isLoading 
+    } = useDoctorDashboard();
+    
     const router = useRouter();
+    const [showDatePicker, setShowDatePicker] = useState(false);
+
+    const onDateChange = (event, date) => {
+        setShowDatePicker(false); 
+        if (date) {
+            setSelectedDate(date);
+        }
+    };
+
+    const renderScheduleCard = (item) => {
+        const appointmentDate = new Date(item.fecha);
+        const timeStr = appointmentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        return (
+            <View key={item._id} style={styles.scheduleCard}>
+                <View style={styles.appointmentInfoContainer}>
+                    <View style={styles.cardHeader}>
+                        <Ionicons name="time-outline" size={22} color="#555" />
+                        <Text style={styles.cardLabel}>HOUR:</Text>
+                        <Text style={styles.cardValue}>{timeStr}</Text>
+                    </View>
+                    <View style={styles.cardContent}>
+                        <Ionicons name="person-circle-outline" size={22} color="#555" />
+                        <Text style={styles.cardLabel}>PATIENT:</Text>
+                        <Text style={styles.cardValue}>{item.paciente?.nombre || "N/A"}</Text>
+                    </View>
+                </View>
+
+                <TouchableOpacity
+                    style={styles.detailsButton}
+                    onPress={() => router.push({
+                        pathname: '/views/AppointmentDetailsScreen',
+                        params: { id: item._id }
+                    })}
+                >
+                    <Ionicons name="chevron-forward-circle" size={32} color="#1a73e8" />
+                </TouchableOpacity>
+            </View>
+        );
+    };
+
+    if (isLoading) {
+        return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text>Loading Schedule...</Text></View>;
+    }
+
     return (
         <View style={{ flex: 1, backgroundColor: '#1a73e8' }}>
-            {/* 1. Ocultar el título de la ruta "index" */}
             <Stack.Screen options={{ headerShown: false }} />
 
             <SafeAreaView style={styles.container}>
-                {/* Header Azul Superior */}
+                {/* Header idéntico al tuyo... */}
                 <View style={styles.header}>
                     <View style={styles.topBar}>
                         <TouchableOpacity style={styles.notificationGroup}>
@@ -52,7 +82,7 @@ const DoctorDashboardScreen = () => {
 
                         <TouchableOpacity style={styles.profileCircleWrapper} onPress={() => router.push('/views/ProfileScreen')}>
                             <RNImage
-                                source={require('../assets/images/doctor-profile.png')}
+                                source={require('../assets/images/doctor-profile1.png')}
                                 style={styles.profileAvatar}
                             />
                         </TouchableOpacity>
@@ -69,9 +99,7 @@ const DoctorDashboardScreen = () => {
                     </View>
                 </View>
 
-                {/* Contenido Principal */}
                 <View style={styles.contentCard}>
-                    {/* Tabs / Pestañas con Z-Index para quedar arriba */}
                     <View style={styles.tabContainer}>
                         <TouchableOpacity style={[styles.tab, styles.activeTab]}>
                             <Ionicons name="home" size={24} color="#fff" />
@@ -98,6 +126,38 @@ const DoctorDashboardScreen = () => {
                             </View>
                         </View>
 
+                        <Text style={styles.sectionTitle}>DATE FILTER</Text>
+                        <View style={styles.dateFilterContainer}>
+                            <TouchableOpacity onPress={() => changeDate(-1)}>
+                                <Ionicons name="chevron-back" size={24} color="#1a73e8" />
+                            </TouchableOpacity>
+
+                            {/* AHORA ES CLICKEABLE */}
+                            <TouchableOpacity 
+                                style={styles.dateInfo} 
+                                onPress={() => setShowDatePicker(true)}
+                            >
+                                <Ionicons name="calendar" size={18} color="#1a73e8" />
+                                <Text style={styles.dateText}>
+                                    {selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+                                </Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity onPress={() => changeDate(1)}>
+                                <Ionicons name="chevron-forward" size={24} color="#1a73e8" />
+                            </TouchableOpacity>
+                        </View>
+
+                        {/* EL CALENDARIO MODAL */}
+                        {showDatePicker && (
+                            <DateTimePicker
+                                value={selectedDate}
+                                mode="date"
+                                display={Platform.OS === 'ios' ? 'inline' : 'default'}
+                                onChange={onDateChange}
+                            />
+                        )}
+
                         <Text style={styles.sectionTitle}>TODAY'S SCHEDULE</Text>
 
                         {schedule.length > 0 ? (
@@ -106,15 +166,13 @@ const DoctorDashboardScreen = () => {
                             <Text style={styles.noAppointments}>No appointments scheduled.</Text>
                         )}
 
-                        <TouchableOpacity style={styles.viewAllButton}>
-                            <Text style={styles.viewAllButtonText}>VIEW ALL APPOINTMENTS</Text>
-                        </TouchableOpacity>
                     </ScrollView>
                 </View>
             </SafeAreaView>
         </View>
     );
 };
+
 
 const styles = StyleSheet.create({
     container: { flex: 1 },
@@ -229,14 +287,18 @@ const styles = StyleSheet.create({
     cardLabel: { fontSize: 14, fontWeight: 'bold', color: '#555', marginLeft: 8 },
     cardValue: { fontSize: 14, color: '#333', marginLeft: 5 },
     detailsButton: { marginLeft: 10 },
-    viewAllButton: {
-        backgroundColor: '#1a73e8',
-        paddingVertical: 15,
-        borderRadius: 12,
+    dateFilterContainer: {
+        flexDirection: 'row',
+        backgroundColor: '#fff',
+        borderRadius: 15,
+        padding: 15,
         alignItems: 'center',
-        marginTop: 10,
+        justifyContent: 'space-between',
+        marginBottom: 10,
+        elevation: 2,
     },
-    viewAllButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
+    dateInfo: { flexDirection: 'row', alignItems: 'center' },
+    dateText: { fontSize: 16, fontWeight: '600', color: '#333', marginLeft: 8, textTransform: 'capitalize' },
 });
 
 export default DoctorDashboardScreen;
