@@ -13,7 +13,6 @@ export const useAppointmentDetail = (appointmentId) => {
 
         try {
             setLoading(true);
-            // Obtenemos todas las citas del paciente
             const response = await api.get("citas/mis-citas");
             
             // Buscamos la cita específica por ID dentro del arreglo
@@ -48,10 +47,9 @@ export const useAppointmentDetail = (appointmentId) => {
                     onPress: async () => {
                         try {
                             setLoading(true);
-                            // Según tu doc: PUT /api/citas/estado
                             await api.put("citas/estado", {
                                 citaId: appointmentId,
-                                estado: "cancelada" // Los pacientes solo pueden cancelar
+                                estado: "cancelada"
                             });
                             Alert.alert("Successfull", "Cancel appointment");
                             router.back();

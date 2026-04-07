@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { Picker } from '@react-native-picker/picker';
-import DateTimePicker from '@react-native-community/datetimepicker'; // Importar
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { usePatientDashboard } from "../hooks/usePatientDashboard";
 
 const PatientDashboardScreen = () => {
@@ -69,7 +69,6 @@ const PatientDashboardScreen = () => {
                         </View>
 
                         <Text style={styles.label}>Date (Tap to select)</Text>
-                        {/* REEMPLAZO DEL TEXTINPUT POR BOTON CON MISMO ESTILO */}
                         <TouchableOpacity
                             style={styles.inputWrapper}
                             onPress={() => setShowDatePicker(true)}
@@ -133,7 +132,6 @@ const PatientDashboardScreen = () => {
                         <Text style={styles.sectionTitle}>My Appointments</Text>
                     </View>
 
-                    {/* Localiza el .map de appointments y actualiza el TouchableOpacity */}
                     {appointments.map((item) => (
                         <TouchableOpacity
                             key={item._id}
@@ -148,10 +146,11 @@ const PatientDashboardScreen = () => {
                                 <Text style={styles.apptDoctor}>{item.medico?.nombre || 'Doctor'}</Text>
                                 <Text style={styles.apptDate}>{new Date(item.fecha).toLocaleString()}</Text>
                                 <View style={[styles.badge, { backgroundColor: getStatusColor(item.estado) }]}>
-                                    <Text style={styles.badgeText}>{item.estado}</Text>
+                                    <Text style={styles.badgeText}>
+                                        {STATUS_TRANSLATIONS[item.estado]?.label || item.estado}
+                                    </Text>
                                 </View>
                             </View>
-                            {/* Esta es la flechita azul que mencionas */}
                             <Ionicons name="chevron-forward-circle" size={30} color="#1a73e8" />
                         </TouchableOpacity>
                     ))}
@@ -161,10 +160,25 @@ const PatientDashboardScreen = () => {
     );
 };
 
-// --- MISMOS ESTILOS SIN CAMBIOS ---
+//le movi a colors, porque antes estaban asi: const colors = { confirmada: '#27ae60', pendiente: '#f39c12', cancelada: '#e74c3c', realizada: '#3498db' }; 2
+// 1. Objeto de soporte
+const STATUS_TRANSLATIONS = {
+    confirmada: { label: 'Confirmed', key: 'confirmed' },
+    pendiente: { label: 'Pending', key: 'pending' },
+    cancelada: { label: 'Cancelled', key: 'cancelled' },
+    realizada: { label: 'Completed', key: 'completed' },
+};
+
+// 2. Función de color actualizada
 const getStatusColor = (status) => {
-    const colors = { confirmada: '#27ae60', pendiente: '#f39c12', cancelada: '#e74c3c', realizada: '#3498db' };
-    return colors[status] || '#95a5a6';
+    const colors = {
+        confirmed: '#27ae60',
+        pending: '#f39c12',
+        cancelled: '#e74c3c',
+        completed: '#3498db'
+    };
+    const key = STATUS_TRANSLATIONS[status]?.key;
+    return colors[key] || '#95a5a6';
 };
 
 const styles = StyleSheet.create({

@@ -2,8 +2,16 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useRouter, useLocalSearchParams } from "expo-router"; // Añadimos useLocalSearchParams
+import { useRouter, useLocalSearchParams } from "expo-router"; 
 import { useAppointmentDetail } from "../hooks/useAppointmentDetail";
+
+const STATUS_TRANSLATIONS = {
+    confirmada: 'Confirmed',
+    pendiente: 'Pending',
+    cancelada: 'Cancelled',
+    realizada: 'Completed',
+};
+
 
 const AppointmentDetailScreen = () => {
     const router = useRouter();
@@ -35,7 +43,9 @@ const AppointmentDetailScreen = () => {
                             <MaterialCommunityIcons name="doctor" size={35} color="#1a73e8" />
                         </View>
                         <Text style={styles.doctorName}>{appointment.medico?.nombre}</Text>
-                        <Text style={styles.specialtyText}>Estado: {appointment.estado.toUpperCase()}</Text>
+                        <Text style={styles.specialtyText}>
+                            State: {(STATUS_TRANSLATIONS[appointment.estado] || appointment.estado).toUpperCase()}
+                        </Text>
                     </View>
 
                     <View style={styles.divider} />

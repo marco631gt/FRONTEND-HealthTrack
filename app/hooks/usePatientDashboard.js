@@ -29,7 +29,8 @@ export const usePatientDashboard = () => {
                 .filter(appt => 
                     appt.medico?._id === selectedDoctorId && 
                     appt.fecha.startsWith(appointmentDate) &&
-                    appt.estado !== 'cancelada'
+                    //LE MOVI AQUI 1.  appt.estado !== 'Cancelada'
+                    appt.estado !== 'Cancelled'
                 )
                 .map(appt => {
                     const d = new Date(appt.fecha);
@@ -95,7 +96,7 @@ export const usePatientDashboard = () => {
         selectedHour, setSelectedHour,
         reason, setReason,
         availableSlots,
-        showDatePicker, setShowDatePicker, // Nuevos para el calendario
+        showDatePicker, setShowDatePicker, 
         handleCreateAppointment,
         refreshAppointments: fetchInitialData
     };

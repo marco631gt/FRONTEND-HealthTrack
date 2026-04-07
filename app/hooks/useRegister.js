@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Alert } from "react-native";
 import { validate } from "../helpers/validators";
-import api from '../models/auth'; // Importamos tu instancia de axios
+import api from '../models/auth';
 import { saveToken, setItem } from "../services/storageService";
 import { useRouter } from 'expo-router';
 
@@ -10,7 +10,7 @@ export const useRegister = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [role, setRole] = useState('Patient'); // 'Patient' o 'Doctor' en la UI
+    const [role, setRole] = useState('Patient');
     const [loading, setLoading] = useState(false);
 
     const [age, setAge] = useState('');
@@ -56,13 +56,13 @@ export const useRegister = () => {
             // Convertimos 'Patient' -> 'paciente' y 'Doctor' -> 'medico'
             const rolParaBackend = role === 'Patient' ? 'paciente' : 'medico';
 
-            // 3. Creación del objeto EXACTO que espera tu API
+            // 3. Creación del objeto 
             const registerData = {
-                nombre: name, // Tu API usa "nombre" no "name"
+                nombre: name, 
                 email: email.toLowerCase().trim(),
                 password: password,
                 rol: rolParaBackend,
-                // Si tu API soporta estos campos extras, se enviarán aquí:
+                // campos extras que agregue cuando pedi el formulario extra:
                 telefono: phoneNumber, 
                 ...(role === 'Patient' && {
                     edad: parseInt(age),
@@ -73,7 +73,7 @@ export const useRegister = () => {
                 })
             };
 
-            // 4. Petición Real a Render
+            // Petición  a Render
             const response = await api.post('auth/register', registerData);
             console.log("Respuesta Registro:", response.data);
 

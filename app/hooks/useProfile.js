@@ -17,13 +17,10 @@ export const useProfile = () => {
         loadUserData();
     }, []);
 
-    // ejecuta el borrado y navegación
     const executeLogout = async () => {
     try {
-        // Borramos el perfil del almacenamiento
         await removeItem('user_profile'); 
         
-        // Borramos el token del almacenamiento seguro
         await deleteToken(); 
 
         setTimeout(() => {

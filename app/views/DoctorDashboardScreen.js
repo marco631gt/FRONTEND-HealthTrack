@@ -10,7 +10,6 @@ const DoctorDashboardScreen = () => {
     const { doctorName, totalPatients, schedule, selectedDate, changeDate, isLoading } = useDoctorDashboard(); const router = useRouter();
 
     const renderScheduleCard = (item) => {
-        // Formatear la fecha para mostrar solo la hora
         const appointmentDate = new Date(item.fecha);
         const timeStr = appointmentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
@@ -25,7 +24,6 @@ const DoctorDashboardScreen = () => {
                     <View style={styles.cardContent}>
                         <Ionicons name="person-circle-outline" size={22} color="#555" />
                         <Text style={styles.cardLabel}>PATIENT:</Text>
-                        {/* Accedemos a la propiedad según el JSON del backend */}
                         <Text style={styles.cardValue}>{item.paciente?.nombre || "N/A"}</Text>
                     </View>
                 </View>
@@ -33,7 +31,7 @@ const DoctorDashboardScreen = () => {
                 <TouchableOpacity
                     style={styles.detailsButton}
                     onPress={() => router.push({
-                        pathname: '/views/AppointmentDetailsScreen', // Reutilizamos la pantalla de detalle
+                        pathname: '/views/AppointmentDetailsScreen',
                         params: { id: item._id }
                     })}
                 >
