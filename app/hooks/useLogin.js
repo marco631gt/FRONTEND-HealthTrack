@@ -12,7 +12,7 @@ export const useLogin = () => {
     const router = useRouter();
 
     const handleLogin = async () => {
-        // 1. Validaciones iniciales (No gastamos recursos de red si los campos están mal)
+        // 1. Validaciones iniciales
         if (email.trim() === '' || password.trim() === '') {
             Alert.alert('Error', 'All the fields are required');
             return;
@@ -27,20 +27,16 @@ export const useLogin = () => {
             setLoading(true);
             // 2. Intento de Login con la API
             const data = {
-                email: email.toLowerCase().trim(), // Limpiamos espacios y minúsculas por seguridad
+                email: email.toLowerCase().trim(),
                 password: password,
             };
 
             const response = await api.post('auth/login', data);
-            console.log('DATOS RECIBIDOS:', response.data); // Esto mostrará exactamente lo que viste en Postman
-            console.log('Status Code:', response.status); // Verás el 200 OK
+            console.log('DATOS RECIBIDOS:', response.data);
+            console.log('Status Code:', response.status);
 
-            // 3. Verificamos si la API devolvió los datos del usuario y el token
-            // Según tu Postman: la respuesta tiene 'token' y 'usuario'
             if (response.data && response.data.usuario) {
 
-                // Extraemos según tu objeto real de Postman: { id, email, nombre, rol }
-                // Agregamos valores por defecto para que no truene si el campo no existe
                 const {
                     email: emailDb,
                     id,
@@ -54,24 +50,20 @@ export const useLogin = () => {
                 } = response.data.usuario;
                 const tokenServer = response.data.token;
 
-                // 4. Guardado de sesión real
-                // Guardamos el token que viene de la respuesta (response.data.token)
                 await saveToken(tokenServer);
 
-                // Mapeamos el rol: Tu API devuelve "paciente"
-                // Lo convertimos a "Patient" para que tu Index.tsx haga el match
                 let mappedRole = "";
                 if (rol === "paciente") {
                     mappedRole = "Patient";
                 } else if (rol === "medico") {
                     mappedRole = "Doctor";
                 } else {
-                    mappedRole = rol; // Por si llega algún otro
+                    mappedRole = rol; 
                 }
 
                 await setItem('user_profile', {
                     id: id,
-                    role: mappedRole, // Guardamos "Patient" o "Doctor"
+                    role: mappedRole, 
                     name: nombre,
                     email: emailDb,
                     telefono: telefono,
@@ -83,15 +75,13 @@ export const useLogin = () => {
 
                 await setItem("last_login", new Date().toISOString());
 
-                // 5. Éxito
                 Alert.alert("Welcome", `Hi, ${nombre}`, [
                     {
                         text: "OK",
-                        onPress: () => router.replace("/") // Al dar OK, forzamos ir al Index
+                        onPress: () => router.replace("/") 
                     }
                 ]);
 
-                // Limpiamos campos
                 setEmail("");
                 setPassword("");
 
@@ -100,10 +90,8 @@ export const useLogin = () => {
             }
 
         } catch (error) {
-            // Manejo de errores de la API (Credenciales incorrectas, servidor caído, etc.)
             console.error("Login Error:", error);
 
-            // Si la API mandó un mensaje de error (como el "msg" de tu respuesta de Postman) lo usamos
             const message = error.response?.data?.msg || "Incorrect credentials or connection problem";
             Alert.alert("Login error", message);
 
